@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import Constants from "expo-constants";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../config/colors";
 
