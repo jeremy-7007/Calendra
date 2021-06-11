@@ -3,16 +3,19 @@ import { StyleSheet, Image } from "react-native";
 import * as Yup from "yup";
 
 import Screen from "../components/Screen";
+import BackButton from "../components/BackButton";
 import { Form, FormField, SubmitButton } from "../components/forms";
+import routes from "../navigation/routes";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
   password: Yup.string().required().min(4).label("Password"),
 });
 
-function LoginScreen(props) {
+function LoginScreen({ navigation }) {
   return (
     <Screen style={styles.container}>
+      <BackButton onPress={() => navigation.navigate(routes.WELCOME)} />
       <Image
         style={styles.logo}
         source={require("../assets/calendar-icon.png")}

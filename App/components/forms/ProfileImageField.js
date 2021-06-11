@@ -10,7 +10,7 @@ import * as ImagePicker from "expo-image-picker";
 
 import colors from "../../config/colors";
 
-function ProfileImageField({ imageUri, onChangeImage, style }) {
+function ProfileImageField({ imageUri, onChangeImage, icon }) {
   const requestPermission = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!granted) alert("Please enable permission to access the library");
@@ -37,7 +37,7 @@ function ProfileImageField({ imageUri, onChangeImage, style }) {
       <View style={styles.container}>
         {!imageUri && (
           <MaterialCommunityIcons
-            name="camera"
+            name={icon}
             size={70}
             color={colors.medium}
             style={styles.icon}

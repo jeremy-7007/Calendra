@@ -7,6 +7,7 @@ import { Form, FormField, SubmitButton } from "../components/forms";
 import Screen from "../components/Screen";
 import ProfileImageField from "../components/forms/ProfileImageField";
 import BackButton from "../components/BackButton";
+import routes from "../navigation/routes";
 
 const validationSchema = Yup.object().shape({
   displayName: Yup.string().required().label("Display name"),
@@ -18,12 +19,12 @@ const validationSchema = Yup.object().shape({
   ),
 });
 
-function RegisterScreen(props) {
+function RegisterScreen({ navigation }) {
   const [imageUri, setImageUri] = useState();
 
   return (
     <Screen style={styles.container}>
-      <BackButton onPress={() => console.log("Back")} />
+      <BackButton onPress={() => navigation.navigate(routes.WELCOME)} />
       <Form
         initialValues={{
           displayName: "",
@@ -37,6 +38,7 @@ function RegisterScreen(props) {
         <ProfileImageField
           imageUri={imageUri}
           onChangeImage={(uri) => setImageUri(uri)}
+          icon="camera"
         />
         <FormField
           autoCapitalize="none"
