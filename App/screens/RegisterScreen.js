@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import * as Yup from "yup";
 import * as ImagePicker from "expo-image-picker";
+import { firebase } from "../../firebase/config";
 
 import { Form, FormField, SubmitButton } from "../components/forms";
 import Screen from "../components/Screen";
@@ -20,7 +21,11 @@ const validationSchema = Yup.object().shape({
 });
 
 function RegisterScreen({ navigation }) {
-  const [imageUri, setImageUri] = useState();
+  const onRegisterPress = (values) => {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(values.email, values.password);
+  };
 
   return (
     <Screen style={styles.container}>
@@ -32,14 +37,10 @@ function RegisterScreen({ navigation }) {
           password: "",
           passwordConfirmation: "",
         }}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => onRegisterPress(values)}
         validationSchema={validationSchema}
       >
-        <ProfileImageField
-          imageUri={imageUri}
-          onChangeImage={(uri) => setImageUri(uri)}
-          icon="camera"
-        />
+        <ProfileImageField name="profileImage" />
         <FormField
           autoCapitalize="none"
           autoCorrect={false}

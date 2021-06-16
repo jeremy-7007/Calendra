@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import Button from "../components/Button";
-import ProfileImageField from "../components/forms/ProfileImageField";
+import ProfileImage from "../components/ProfileImage";
 import Screen from "../components/Screen";
 import Text from "../components/Text";
 
@@ -11,7 +11,7 @@ function AccountScreen() {
 
   return (
     <Screen style={styles.container}>
-      <ProfileImageField
+      <ProfileImage
         imageUri={imageUri}
         onChangeImage={setImageUri}
         icon="account"
