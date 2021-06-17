@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   tagline: {
     fontSize: 25,
-    fontWeight: "600",
+    fontWeight: "bold",
     paddingVertical: 10,
   },
 });

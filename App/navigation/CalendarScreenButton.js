@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Platform } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import colors from "../config/colors";
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     borderColor: colors.white,
     borderRadius: 40,
     borderWidth: 10,
-    bottom: 20,
+    bottom: Platform.OS === "android" ? 30 : 20,
     height: 80,
     justifyContent: "center",
     width: 80,

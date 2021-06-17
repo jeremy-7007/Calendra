@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Image } from "react-native";
 import * as Yup from "yup";
+import { firebase } from "../../firebase/config";
 
+import AuthContext from "../auth/Context";
 import Screen from "../components/Screen";
 import BackButton from "../components/BackButton";
 import { Form, FormField, SubmitButton } from "../components/forms";
@@ -13,6 +15,31 @@ const validationSchema = Yup.object().shape({
 });
 
 function LoginScreen({ navigation }) {
+  const authContext = useContext(AuthContext);
+
+  const onLoginPress = ({ email, password }) => {
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then((response) => {
+        const uid = response.user.uid;
+        const usersRef = firebase.firestore().collection("users");
+        usersRef
+          .doc(uid)
+          .get()
+          .then((firestoreDocument) => {
+            if (!firestoreDocument.exists) {
+              alert("User no longer exists");
+              return;
+            }
+            const user = firestoreDocument.data();
+            authContext.setUser(user);
+          })
+          .catch((error) => alert(error));
+      })
+      .catch((error) => alert(error));
+  };
+
   return (
     <Screen style={styles.container}>
       <BackButton onPress={() => navigation.navigate(routes.WELCOME)} />
@@ -23,7 +50,7 @@ function LoginScreen({ navigation }) {
 
       <Form
         initialValues={{ email: "", password: "" }}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => onLoginPress(values)}
         validationSchema={validationSchema}
       >
         <FormField

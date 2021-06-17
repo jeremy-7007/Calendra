@@ -1,16 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
+import AuthContext from "./App/auth/Context";
 
 import navigationTheme from "./App/navigation/navigationTheme";
 import AppNavigator from "./App/navigation/AppNavigator";
 import AuthNavigator from "./App/navigation/AuthNavigator";
 
 export default function App() {
+  const [user, setUser] = useState();
+
   return (
-    <NavigationContainer theme={navigationTheme}>
-      <AuthNavigator />
-    </NavigationContainer>
+    <AuthContext.Provider value={{ user, setUser }}>
+      <NavigationContainer theme={navigationTheme}>
+        {user ? <AppNavigator /> : <AuthNavigator />}
+      </NavigationContainer>
+    </AuthContext.Provider>
   );
 }
 
