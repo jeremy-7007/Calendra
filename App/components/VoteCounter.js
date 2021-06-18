@@ -6,48 +6,27 @@ import IconButton from "./IconButton";
 import Text from "./Text";
 
 function VoteCounter({ originalScore }) {
-  const [vote, setVote] = useState(0);
-  const [upvoteColor, setUpvoteColor] = useState(colors.medium);
-  const [downvoteColor, setDownvoteColor] = useState(colors.medium);
+  const [upvote, setUpvote] = useState(false);
+  const [downvote, setDownvote] = useState(false);
   const [score, setScore] = useState(originalScore);
 
   function onPressUp() {
-    if (vote === 1) {
-      setVote(0);
-      console.log(vote);
-    } else {
-      setVote(1);
-      console.log(vote);
+    if (!upvote) setScore(score + 1);
+    else setScore(score - 1);
+    setUpvote(!upvote);
+    if (downvote) {
+      setScore(score + 2);
+      setDownvote(!downvote);
     }
-    console.log(vote);
-    checkState();
-    console.log(vote);
   }
+
   function onPressDown() {
-    if (vote === -1) {
-      setVote(0);
-      console.log(vote);
-    } else {
-      setVote(-1);
-      console.log(vote);
-    }
-    console.log(vote);
-    checkState();
-    console.log(vote);
-  }
-  function checkState() {
-    if (vote === 1) {
-      setUpvoteColor("lightgreen");
-      setDownvoteColor(colors.medium);
-      setScore(originalScore + 1);
-    } else if (vote === 0) {
-      setUpvoteColor(colors.medium);
-      setDownvoteColor(colors.medium);
-      setScore(originalScore);
-    } else if (vote === -1) {
-      setUpvoteColor(colors.medium);
-      setDownvoteColor("tomato");
-      setScore(originalScore - 1);
+    if (!downvote) setScore(score - 1);
+    else setScore(score + 1);
+    setDownvote(!downvote);
+    if (upvote) {
+      setScore(score - 2);
+      setUpvote(!upvote);
     }
   }
 
@@ -56,14 +35,14 @@ function VoteCounter({ originalScore }) {
       <IconButton
         icon="arrow-bold-up"
         size={35}
-        color={upvoteColor}
+        color={upvote ? colors.upvote : colors.medium}
         onPress={onPressUp}
       />
       <Text style={styles.score}>{score.toString()}</Text>
       <IconButton
         icon="arrow-bold-down"
         size={35}
-        color={downvoteColor}
+        color={downvote ? colors.downvote : colors.medium}
         onPress={onPressDown}
       />
     </View>
