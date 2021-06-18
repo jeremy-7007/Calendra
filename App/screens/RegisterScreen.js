@@ -24,7 +24,7 @@ const validationSchema = Yup.object().shape({
 function RegisterScreen({ navigation }) {
   const authContext = useContext(AuthContext);
 
-  const onRegisterPress = ({ email, password, displayName }) => {
+  const onRegisterPress = ({ email, password, displayName, profileImage }) => {
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
@@ -34,6 +34,7 @@ function RegisterScreen({ navigation }) {
           id: uid,
           email,
           displayName,
+          profileImage: profileImage ? profileImage : null,
         };
         const usersRef = firebase.firestore().collection("users");
         usersRef

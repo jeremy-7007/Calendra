@@ -1,5 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { StyleSheet } from "react-native";
+import { firebase } from "../../firebase/config";
 
 import AuthContext from "../auth/context";
 import Button from "../components/Button";
@@ -8,14 +9,30 @@ import Screen from "../components/Screen";
 import Text from "../components/Text";
 
 function AccountScreen() {
-  const [imageUri, setImageUri] = useState();
   const { user, setUser } = useContext(AuthContext);
+
+  const changeImage = (newImage) => {
+    const uid = user.id;
+    const usersRef = firebase.firestore().collection("users");
+    usersRef
+      .doc(uid)
+      .update("profileImage", newImage)
+      .catch((error) => alert(error));
+    usersRef
+      .doc(uid)
+      .get()
+      .then((firestoreDocument) => {
+        const user = firestoreDocument.data();
+        setUser(user);
+      })
+      .catch((error) => alert(error));
+  };
 
   return (
     <Screen style={styles.container}>
       <ProfileImage
-        imageUri={imageUri}
-        onChangeImage={setImageUri}
+        imageUri={user.profileImage}
+        onChangeImage={changeImage}
         icon="account"
       />
       <Text style={styles.displayName}>{user.displayName}</Text>
