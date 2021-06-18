@@ -3,7 +3,7 @@ import { StyleSheet, Image } from "react-native";
 import * as Yup from "yup";
 import { firebase } from "../../firebase/config";
 
-import AuthContext from "../auth/Context";
+import AuthContext from "../auth/context";
 import Screen from "../components/Screen";
 import BackButton from "../components/BackButton";
 import { Form, FormField, SubmitButton } from "../components/forms";

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { StyleSheet } from "react-native";
 
+import AuthContext from "../auth/context";
 import Button from "../components/Button";
 import ProfileImage from "../components/ProfileImage";
 import Screen from "../components/Screen";
@@ -8,7 +9,7 @@ import Text from "../components/Text";
 
 function AccountScreen() {
   const [imageUri, setImageUri] = useState();
-  const [displayName, setDisplayName] = useState("John Doe");
+  const { user, setUser } = useContext(AuthContext);
 
   return (
     <Screen style={styles.container}>
@@ -17,8 +18,8 @@ function AccountScreen() {
         onChangeImage={setImageUri}
         icon="account"
       />
-      <Text style={styles.displayName}>{displayName}</Text>
-      <Button title="Logout" />
+      <Text style={styles.displayName}>{user.displayName}</Text>
+      <Button title="Logout" onPress={() => setUser(null)} />
     </Screen>
   );
 }
@@ -31,6 +32,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 30,
     fontWeight: "bold",
+    marginBottom: 10,
   },
 });
 

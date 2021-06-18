@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import AuthContext from "./App/auth/Context";
+import AuthContext from "./App/auth/context";
 
 import navigationTheme from "./App/navigation/navigationTheme";
 import AppNavigator from "./App/navigation/AppNavigator";

@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { firebase } from "../../firebase/config";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 
-import AuthContext from "../auth/Context";
+import AuthContext from "../auth/context";
 import { Form, FormField, SubmitButton } from "../components/forms";
 import Screen from "../components/Screen";
 import ProfileImageField from "../components/forms/ProfileImageField";
