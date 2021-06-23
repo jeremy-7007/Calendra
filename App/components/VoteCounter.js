@@ -1,33 +1,54 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
+import { firebase } from "../../firebase/config";
 
 import colors from "../config/colors";
 import IconButton from "./IconButton";
 import Text from "./Text";
 
-function VoteCounter({ originalScore }) {
+function VoteCounter({ originalScore, id }) {
   const [upvote, setUpvote] = useState(false);
   const [downvote, setDownvote] = useState(false);
   const [score, setScore] = useState(originalScore);
 
+  const docRef = firebase.firestore().collection("events").doc(id);
+
+  function updateBackend(newScore) {
+    docRef.update({ score: newScore }).catch((error) => alert(error));
+  }
+
   function onPressUp() {
-    if (!upvote) setScore(score + 1);
-    else setScore(score - 1);
-    setUpvote(!upvote);
     if (downvote) {
       setScore(score + 2);
       setDownvote(!downvote);
+      updateBackend(score + 2);
+    } else {
+      if (!upvote) {
+        setScore(score + 1);
+        updateBackend(score + 1);
+      } else {
+        setScore(score - 1);
+        updateBackend(score - 1);
+      }
     }
+    setUpvote(!upvote);
   }
 
   function onPressDown() {
-    if (!downvote) setScore(score - 1);
-    else setScore(score + 1);
-    setDownvote(!downvote);
     if (upvote) {
       setScore(score - 2);
       setUpvote(!upvote);
+      updateBackend(score - 2);
+    } else {
+      if (!downvote) {
+        setScore(score - 1);
+        updateBackend(score - 1);
+      } else {
+        setScore(score + 1);
+        updateBackend(score + 1);
+      }
     }
+    setDownvote(!downvote);
   }
 
   return (

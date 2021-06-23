@@ -1,12 +1,17 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import colors from "../config/colors";
 
-function BackButton({ onPress }) {
+import colors from "../config/colors";
+import Text from "./Text";
+
+function BackButton({ onPress, cancel = false }) {
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
-      <MaterialIcons name="arrow-back-ios" size={24} color={colors.medium} />
+      {!cancel && (
+        <MaterialIcons name="arrow-back-ios" size={24} color={colors.medium} />
+      )}
+      {cancel && <Text style={styles.cancel}>Cancel</Text>}
     </TouchableOpacity>
   );
 }
@@ -16,6 +21,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 15,
     left: 15,
+  },
+  cancel: {
+    color: colors.medium,
   },
 });
 
