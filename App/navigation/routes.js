@@ -1,6 +1,10 @@
 export default Object.freeze({
-  WELCOME: "Welcome",
-  LOGIN: "Login",
-  REGISTER: "Register",
+  ACCOUNT: "Account",
+  ACCOUNTNAV: "AccountNav",
   CALENDAR: "Calendar",
+  LOGIN: "Login",
+  MYGROUPS: "My Groups",
+  REGISTER: "Register",
+  SETTING: "Setting",
+  WELCOME: "Welcome"
 });
