@@ -4,7 +4,7 @@ import BackButton from '../components/BackButton';
 import Screen from '../components/Screen';
 import routes from '../navigation/routes';
 
-function MyGroupScreen({ navigation }) {
+function SearchScreen({ navigation }) {
     return (
         <Screen>
             <BackButton onPress={() => navigation.navigate(routes.ACCOUNT)} />   
@@ -12,4 +12,4 @@ function MyGroupScreen({ navigation }) {
     );
 }
 
-export default MyGroupScreen;
+export default SearchScreen;

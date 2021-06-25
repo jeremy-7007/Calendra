@@ -6,7 +6,6 @@ import PostsScreen from "../screens/PostsScreen";
 import CalendarScreen from "../screens/CalendarScreen";
 import CalendarScreenButton from "./CalendarScreenButton";
 import routes from "./routes";
-import AccountScreen from "../screens/AccountScreen";
 import AccountNavigator from "./AccountNavigator";
 
 const Tab = createBottomTabNavigator();
