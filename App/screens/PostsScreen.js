@@ -43,7 +43,11 @@ function PostsScreen({ navigation }) {
         keyExtractor={(event) => event.id.toString()}
         ItemSeparatorComponent={ListItemSeparator}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={refresh}
+            colors={[colors.primary]}
+          />
         }
         renderItem={({ item }) => (
           <ListItem

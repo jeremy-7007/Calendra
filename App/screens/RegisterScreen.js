@@ -35,6 +35,7 @@ function RegisterScreen({ navigation }) {
           email,
           displayName,
           profileImage: profileImage ? profileImage : null,
+          selectedEvents: [],
         };
         const usersRef = firebase.firestore().collection("users");
         usersRef

@@ -13,22 +13,24 @@ function VoteCounter({ originalScore, id }) {
 
   const docRef = firebase.firestore().collection("events").doc(id);
 
-  function updateBackend(newScore) {
-    docRef.update({ score: newScore }).catch((error) => alert(error));
+  function updateBackend(addScore) {
+    docRef
+      .update({ score: firebase.firestore.FieldValue.increment(addScore) })
+      .catch((error) => alert(error));
   }
 
   function onPressUp() {
     if (downvote) {
       setScore(score + 2);
       setDownvote(!downvote);
-      updateBackend(score + 2);
+      updateBackend(2);
     } else {
       if (!upvote) {
         setScore(score + 1);
-        updateBackend(score + 1);
+        updateBackend(1);
       } else {
         setScore(score - 1);
-        updateBackend(score - 1);
+        updateBackend(-1);
       }
     }
     setUpvote(!upvote);
@@ -38,14 +40,14 @@ function VoteCounter({ originalScore, id }) {
     if (upvote) {
       setScore(score - 2);
       setUpvote(!upvote);
-      updateBackend(score - 2);
+      updateBackend(-2);
     } else {
       if (!downvote) {
         setScore(score - 1);
-        updateBackend(score - 1);
+        updateBackend(-1);
       } else {
         setScore(score + 1);
-        updateBackend(score + 1);
+        updateBackend(1);
       }
     }
     setDownvote(!downvote);
