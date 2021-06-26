@@ -1,5 +1,5 @@
 import React, { useContext, useState, useCallback, useEffect } from "react";
-import { StyleSheet, Button } from "react-native";
+import { StyleSheet } from "react-native";
 import { Agenda } from "react-native-calendars";
 import { firebase } from "../../firebase/config";
 import { useFocusEffect } from "@react-navigation/native";
@@ -30,7 +30,7 @@ function CalendarScreen(props) {
             .get()
             .then((doc) => {
               const event = doc.data();
-              const dateField = dateFormat(event.date.toDate());
+              const dateField = dateFormat(event.dateTime.toDate());
               if (!newItem.hasOwnProperty(dateField)) {
                 newItem[dateField] = [event];
               } else {
@@ -44,21 +44,20 @@ function CalendarScreen(props) {
       .catch((error) => alert(error));
   }
 
-  function dateFormat(date) {
-    return moment(date).format("YYYY-MM-DD");
+  function dateFormat(dateTime) {
+    return moment(dateTime).format("YYYY-MM-DD");
   }
 
   useFocusEffect(useCallback(fetchEvents, []));
 
   return (
     <Screen>
-      <Button title="Fetch" onPress={fetchEvents} />
       <Agenda
         items={items}
         renderItem={(item, firstItemInDay) => {
           return (
             <ItemCard
-              startTime={moment(item.time.toDate()).format("hh : mm")}
+              startTime={moment(item.dateTime.toDate()).format("hh : mm")}
               description={item.title}
               bookmarkColor={colors.primary}
             />

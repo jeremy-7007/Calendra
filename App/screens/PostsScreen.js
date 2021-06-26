@@ -52,8 +52,7 @@ function PostsScreen({ navigation }) {
         renderItem={({ item }) => (
           <ListItem
             title={item.title}
-            date={item.date.toDate()}
-            time={item.time.toDate()}
+            dateTime={item.dateTime.toDate()}
             score={item.score}
             id={item.id}
           />

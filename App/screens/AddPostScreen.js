@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import * as Yup from "yup";
 import { firebase } from "../../firebase/config";
@@ -8,8 +8,7 @@ import { Form, FormField, SubmitButton } from "../components/forms";
 import BackButton from "../components/BackButton";
 import routes from "../navigation/routes";
 import Text from "../components/Text";
-import DatePicker from "../components/forms/DatePicker";
-import TimePicker from "../components/forms/TimePicker";
+import MomentPicker from "../components/forms/MomentPicker";
 
 const validationSchema = Yup.object().shape({
   eventTitle: Yup.string().required().label("Event title"),
@@ -17,14 +16,15 @@ const validationSchema = Yup.object().shape({
 
 function AddPostScreen({ navigation }) {
   const eventRef = firebase.firestore().collection("events");
-  const current = new Date();
+  const [dateTime, setDateTime] = useState(new Date());
 
-  const handleSubmit = ({ eventTitle, date, time }) => {
+  const onChange = (currentDate) => setDateTime(currentDate);
+
+  const handleSubmit = ({ eventTitle, dateTime }) => {
     const postedAt = firebase.firestore.FieldValue.serverTimestamp();
     const data = {
       title: eventTitle,
-      date,
-      time,
+      dateTime,
       score: 0,
       postedAt,
     };
@@ -44,8 +44,7 @@ function AddPostScreen({ navigation }) {
       <Form
         initialValues={{
           eventTitle: "",
-          date: current,
-          time: current,
+          dateTime: new Date(),
         }}
         onSubmit={handleSubmit}
         validationSchema={validationSchema}
@@ -55,8 +54,18 @@ function AddPostScreen({ navigation }) {
           placeholder="Add a short title"
           icon="format-title"
         />
-        <DatePicker name="date" defaultDate={current} />
-        <TimePicker name="time" defaultTime={current} />
+        <MomentPicker
+          name="dateTime"
+          dateTime={dateTime}
+          mode="date"
+          onChange={onChange}
+        />
+        <MomentPicker
+          name="dateTime"
+          dateTime={dateTime}
+          mode="time"
+          onChange={onChange}
+        />
         <SubmitButton title="Post Event" />
       </Form>
     </Screen>

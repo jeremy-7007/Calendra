@@ -3,11 +3,11 @@ import { View, TouchableWithoutFeedback, StyleSheet } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useFormikContext } from "formik";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import moment from "moment";
 
 import ErrorMessage from "./ErrorMessage";
 import colors from "../../config/colors";
 import Text from "../Text";
+import moment from "moment";
 
 function TimePicker({ name, defaultTime, width }) {
   const { setFieldValue, errors, touched } = useFormikContext();
