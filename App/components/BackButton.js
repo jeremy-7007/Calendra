@@ -21,9 +21,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 15,
     left: 15,
+    zIndex: 999,
   },
   cancel: {
     color: colors.medium,
+    zIndex: 999,
   },
 });
 

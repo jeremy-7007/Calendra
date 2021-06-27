@@ -14,9 +14,12 @@ const validationSchema = Yup.object().shape({
   eventTitle: Yup.string().required().label("Event title"),
 });
 
-function AddPostScreen({ navigation }) {
-  const eventRef = firebase.firestore().collection("events");
+function AddPostScreen({ navigation, route }) {
+  const { group } = route.params;
   const [dateTime, setDateTime] = useState(new Date());
+
+  const eventsRef = firebase.firestore().collection("events");
+  const groupRef = firebase.firestore().collection("groups").doc(group);
 
   const onChange = (currentDate) => setDateTime(currentDate);
 
@@ -27,10 +30,23 @@ function AddPostScreen({ navigation }) {
       dateTime,
       score: 0,
       postedAt,
+      group,
     };
-    eventRef
+    eventsRef
       .add(data)
-      .then(() => navigation.navigate(routes.POSTS))
+      .then((docRef) => {
+        docRef
+          .update({
+            id: docRef.id,
+          })
+          .catch((error) => alert(error));
+        groupRef
+          .update({
+            events: firebase.firestore.FieldValue.arrayUnion(docRef.id),
+          })
+          .catch((error) => alert(error));
+        navigation.navigate(routes.POSTS);
+      })
       .catch((error) => alert(error));
   };
 
