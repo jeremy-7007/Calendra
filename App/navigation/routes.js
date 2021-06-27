@@ -8,4 +8,6 @@ export default Object.freeze({
   SEARCH: "Search",
   SETTING: "Setting",
   WELCOME: "Welcome"
+  ADD_POST: "AddPost",
+  POSTS: "Posts",
 });

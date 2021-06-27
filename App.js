@@ -3,6 +3,7 @@ import { StyleSheet, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import AuthContext from "./App/auth/context";
 import { firebase } from "./firebase/config";
+import * as Notifications from "expo-notifications";
 
 import navigationTheme from "./App/navigation/navigationTheme";
 import AppNavigator from "./App/navigation/AppNavigator";
@@ -42,12 +43,24 @@ export default function App() {
   }
 
 
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
+
   return (
     <AuthContext.Provider value={{ user, setUser, group, setGroup }}>
       <NavigationContainer theme={navigationTheme}>
-        { user ? <AppNavigator /> : <AuthNavigator />}
+        {user ? <AppNavigator /> : <AuthNavigator />}
       </NavigationContainer>
     </AuthContext.Provider>
+
+    // <NavigationContainer theme={navigationTheme}>
+    //   <AppNavigator />
+    // </NavigationContainer>
   );
 }
 
