@@ -5,6 +5,7 @@ import AccountScreen from '../screens/AccountScreen';
 import MyGroupScreen from '../screens/MyGroupScreen';
 import SettingScreen from '../screens/SettingScreen';
 import SearchScreen from '../screens/SearchScreen';
+import CreateGroupScreen from '../screens/CreateGroupScreen';
 
 const Stack = createStackNavigator();
 
@@ -22,7 +23,7 @@ const AccountNavigator = () => (
         />
         <Stack.Screen
         name="Search"
-        component={SearchScreen}
+        component={CreateGroupScreen}
         options={{ headerShown: false }}
         />
         <Stack.Screen

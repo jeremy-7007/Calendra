@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Button } from "react-native";
 import * as Yup from "yup";
 import { firebase } from "../../firebase/config";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
@@ -35,6 +35,8 @@ function RegisterScreen({ navigation }) {
           email,
           displayName,
           profileImage: profileImage ? profileImage : null,
+          groups: [],
+          selectedEvents: []
         };
         const usersRef = firebase.firestore().collection("users");
         usersRef

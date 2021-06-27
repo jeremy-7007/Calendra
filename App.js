@@ -11,14 +11,13 @@ import AuthNavigator from "./App/navigation/AuthNavigator";
 export default function App() {
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null);
-  console.log("O")
+  const [group, setGroup] = useState(null);
 
 
   useEffect(() => {
     const usersRef = firebase.firestore().collection('users');
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        console.log(true)
         usersRef
           .doc(user.uid)
           .get()
@@ -44,7 +43,7 @@ export default function App() {
 
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, setUser, group, setGroup }}>
       <NavigationContainer theme={navigationTheme}>
         { user ? <AppNavigator /> : <AuthNavigator />}
       </NavigationContainer>
