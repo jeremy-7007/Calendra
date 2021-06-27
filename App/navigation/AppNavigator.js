@@ -2,11 +2,11 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import PostsScreen from "../screens/PostsScreen";
 import CalendarScreen from "../screens/CalendarScreen";
 import CalendarScreenButton from "./CalendarScreenButton";
 import routes from "./routes";
 import AccountScreen from "../screens/AccountScreen";
+import PostsNavigator from "./PostsNavigator";
 
 const Tab = createBottomTabNavigator();
 
@@ -14,7 +14,7 @@ const AppNavigator = () => (
   <Tab.Navigator>
     <Tab.Screen
       name="Posts"
-      component={PostsScreen}
+      component={PostsNavigator}
       options={{
         tabBarIcon: ({ color, size }) => (
           <MaterialCommunityIcons name="menu" color={color} size={size} />

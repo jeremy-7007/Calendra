@@ -3,4 +3,6 @@ export default Object.freeze({
   LOGIN: "Login",
   REGISTER: "Register",
   CALENDAR: "Calendar",
+  ADD_POST: "AddPost",
+  POSTS: "Posts",
 });
