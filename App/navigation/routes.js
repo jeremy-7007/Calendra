@@ -7,7 +7,7 @@ export default Object.freeze({
   REGISTER: "Register",
   SEARCH: "Search",
   SETTING: "Setting",
-  WELCOME: "Welcome"
+  WELCOME: "Welcome",
   ADD_POST: "AddPost",
   POSTS: "Posts",
 });
