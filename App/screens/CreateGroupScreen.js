@@ -40,15 +40,15 @@ function CreateGroupScreen({ navigation }) {
     const id = authContext.user.id;
     const usersRef = firebase.firestore().collection("users").doc(id);
     const addGroup = await usersRef.update({
-      group: firebase.firestore.FieldValue.arrayUnion(groupName)
-    });
+      groups: firebase.firestore.FieldValue.arrayUnion(groupName)
+    }).catch((error) => alert(error));
 
-    usersRef
-    .get()
-    .then((firestoreDocument) => {
-      const user = firestoreDocument.data();
-      authContext.setUser(user);
-    })
+    // usersRef
+    // .get()
+    // .then((firestoreDocument) => {
+    //   const user = firestoreDocument.data();
+    //   authContext.setUser(user);
+    // })
     
 
 

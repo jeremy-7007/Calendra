@@ -24,7 +24,7 @@ function PostsScreen({ navigation }) {
   const groupsRef = firebase.firestore().collection("groups");
   const userRef = firebase.firestore().collection("users").doc(user.id);
 
-  const refreshEvents = (groupName) => {
+  const refreshEvents = () => {
     setRefreshing(true);
     eventsRef
       .orderBy("score")
@@ -95,10 +95,15 @@ function PostsScreen({ navigation }) {
 
   const onPickerChange = (itemValue) => {
     setGroup(itemValue);
-    refreshEvents(itemValue);
+    refreshEvents();
   };
 
-  useFocusEffect(useCallback(fetchUserData, []));
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserData();
+      refreshEvents();
+    }, [])
+  );
 
   return (
     <Screen style={styles.container}>
@@ -119,7 +124,7 @@ function PostsScreen({ navigation }) {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() => refreshEvents(group)}
+            onRefresh={() => refreshEvents()}
             colors={[colors.primary]}
           />
         }
