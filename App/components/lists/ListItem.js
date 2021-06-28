@@ -11,7 +11,7 @@ import AddButton from "./AddButton";
 import IgnoreButton from "./IgnoreButton";
 import AuthContext from "../../auth/context";
 
-function ListItem({ title, dateTime, score, id, onAdd }) {
+function ListItem({ title, dateTime, score, id }) {
   const [visible, setVisible] = useState(true);
   const { user } = useContext(AuthContext);
 
@@ -29,8 +29,7 @@ function ListItem({ title, dateTime, score, id, onAdd }) {
       content: notificationContent,
       trigger: dateTime,
     });
-    onAdd();
-    // setVisible(false);
+    setVisible(false);
   }
 
   if (visible) {

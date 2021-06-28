@@ -129,7 +129,6 @@ function PostsScreen({ navigation }) {
             dateTime={item.dateTime.toDate()}
             score={item.score}
             id={item.id}
-            onAdd={() => refreshEvents(group)}
           />
         )}
       />
@@ -146,6 +145,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 10,
     marginBottom: 20,
+    alignItems: "center",
   },
 });
 

@@ -35,13 +35,13 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 25,
     flexDirection: "row",
+    alignItems: "center",
   },
   picker: {
     backgroundColor: colors.white,
     width: "100%",
   },
   pickerIcon: {
-    alignSelf: "center",
     position: "absolute",
     right: 15,
   },
