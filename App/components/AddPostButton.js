@@ -15,9 +15,9 @@ function AddPostButton({ onPress }) {
 const styles = StyleSheet.create({
   button: {
     backgroundColor: colors.primary,
-    borderRadius: 25,
-    height: 50,
-    width: 50,
+    borderRadius: 23,
+    height: 46,
+    width: 46,
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",

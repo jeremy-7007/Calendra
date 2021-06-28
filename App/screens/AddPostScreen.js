@@ -1,9 +1,8 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import * as Yup from "yup";
 import { firebase } from "../../firebase/config";
 
-import AuthContext from "../auth/context";
 import Screen from "../components/Screen";
 import { Form, FormField, SubmitButton } from "../components/forms";
 import BackButton from "../components/BackButton";
@@ -15,47 +14,40 @@ const validationSchema = Yup.object().shape({
   eventTitle: Yup.string().required().label("Event title"),
 });
 
-function AddPostScreen({ navigation }) {
-  const authContext = useContext(AuthContext);
-  const eventRef = firebase.firestore().collection("events");
+function AddPostScreen({ navigation, route }) {
+  const { group } = route.params;
   const [dateTime, setDateTime] = useState(new Date());
+
+  const eventsRef = firebase.firestore().collection("events");
+  const groupRef = firebase.firestore().collection("groups").doc(group);
 
   const onChange = (currentDate) => setDateTime(currentDate);
 
-  const handleSubmit = async ({ eventTitle, groupName, dateTime }) => {
+  const handleSubmit = ({ eventTitle, dateTime }) => {
     const postedAt = firebase.firestore.FieldValue.serverTimestamp();
-    const eventId = groupName + ": " + eventTitle + " at " + dateTime;
-
-    if (eventRef.doc(eventId).get().exists) {
-      alert("Event already exists");
-      return;
-    };
-
     const data = {
-      eventTitle,
-      group: groupName,
+      title: eventTitle,
       dateTime,
       score: 0,
       postedAt,
+      group,
     };
-    eventRef
-      .doc(eventId)
-      .set(data)
-      .then(() => navigation.navigate(routes.POSTS))
+    eventsRef
+      .add(data)
+      .then((docRef) => {
+        docRef
+          .update({
+            id: docRef.id,
+          })
+          .catch((error) => alert(error));
+        groupRef
+          .update({
+            events: firebase.firestore.FieldValue.arrayUnion(docRef.id),
+          })
+          .catch((error) => alert(error));
+        navigation.navigate(routes.POSTS);
+      })
       .catch((error) => alert(error));
-
-    const groupRef = firebase.firestore().collection("groups").doc(groupName);
-
-    const addEventToGroup = await groupRef.update({
-      events: firebase.firestore.FieldValue.arrayUnion(eventId)
-    }).catch((error) => alert(error));
-
-    const userId = authContext.user.id;
-    const usersRef = firebase.firestore().collection("users").doc(userId);
-    const addEventToUser = await usersRef.update({
-      selectedEvents: firebase.firestore.FieldValue.arrayUnion(eventId)
-    }).catch((error) => alert(error));
-
   };
 
   return (
@@ -68,7 +60,6 @@ function AddPostScreen({ navigation }) {
       <Form
         initialValues={{
           eventTitle: "",
-          groupName: "",
           dateTime: new Date(),
         }}
         onSubmit={handleSubmit}
@@ -77,11 +68,6 @@ function AddPostScreen({ navigation }) {
         <FormField
           name="eventTitle"
           placeholder="Add a short title"
-          icon="format-title"
-        />
-        <FormField
-          name="groupName"
-          placeholder="Add group"
           icon="format-title"
         />
         <MomentPicker

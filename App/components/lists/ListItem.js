@@ -46,7 +46,7 @@ function ListItem({ title, dateTime, score, id }) {
           <VoteCounter originalScore={score} id={id} />
         </View>
         <View style={styles.buttonContainer}>
-          <AddButton onPress={() => handleAdd()} />
+          <AddButton onPress={handleAdd} />
           <IgnoreButton onPress={() => setVisible(false)} />
         </View>
       </View>
