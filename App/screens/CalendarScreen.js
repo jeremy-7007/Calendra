@@ -30,6 +30,7 @@ function CalendarScreen(props) {
             .get()
             .then((doc) => {
               const event = doc.data();
+              console.log(event.dateTime);
               const dateField = dateFormat(event.dateTime.toDate());
               if (!newItem.hasOwnProperty(dateField)) {
                 newItem[dateField] = [event];
