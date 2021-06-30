@@ -37,15 +37,26 @@ function AccountScreen({ navigation }) {
         icon="account"
       />
       <Text style={styles.displayName}>{user.displayName}</Text>
-      <Button title="My Groups" onPress={() => navigation.navigate(routes.MYGROUPS)} />
-      <Button title="Search" onPress={() => navigation.navigate(routes.SEARCH)} />
-      <Button title="Settings" onPress={() => navigation.navigate(routes.SETTING)}/>
-      <Button title="Logout" onPress={
-        () => {
+      <Button
+        title="My Groups"
+        onPress={() => navigation.navigate(routes.MYGROUPS)}
+      />
+      <Button
+        title="New Group"
+        onPress={() => navigation.navigate(routes.SEARCH)}
+      />
+      <Button title="Search Groups" />
+      <Button
+        title="Settings"
+        onPress={() => navigation.navigate(routes.SETTING)}
+      />
+      <Button
+        title="Logout"
+        onPress={() => {
           setUser(null);
           firebase.auth().signOut();
-        }
-      } />
+        }}
+      />
     </Screen>
   );
 }
@@ -58,7 +69,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 30,
     fontWeight: "bold",
-    marginBottom: 30,
+    marginBottom: 10,
   },
 });
 

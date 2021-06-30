@@ -12,10 +12,7 @@ function WelcomeScreen({ navigation }) {
       source={require("../assets/calendar-background.jpg")}
     >
       <View style={styles.logoContainer}>
-        <Image
-          style={styles.logo}
-          source={require("../assets/calendar-icon.png")}
-        />
+        <Image style={styles.logo} source={require("../assets/Calendra.png")} />
         <Text style={styles.tagline}>Remind me later!</Text>
       </View>
       <View style={styles.buttonsContainer}>

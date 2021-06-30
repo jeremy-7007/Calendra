@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
     alignSelf: "center",
-    margin: 40,
+    margin: 30,
   },
   image: {
     width: "100%",
