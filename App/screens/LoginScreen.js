@@ -11,7 +11,7 @@ import routes from "../navigation/routes";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
-  password: Yup.string().required().min(4).label("Password"),
+  password: Yup.string().required().min(6).label("Password"),
 });
 
 function LoginScreen({ navigation }) {
@@ -43,10 +43,7 @@ function LoginScreen({ navigation }) {
   return (
     <Screen style={styles.container}>
       <BackButton onPress={() => navigation.navigate(routes.WELCOME)} />
-      <Image
-        style={styles.logo}
-        source={require("../assets/calendar-icon.png")}
-      />
+      <Image style={styles.logo} source={require("../assets/Calendra.png")} />
 
       <Form
         initialValues={{ email: "", password: "" }}

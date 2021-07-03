@@ -68,7 +68,7 @@ function PostsScreen({ navigation }) {
       .get()
       .then((userDoc) => {
         const data = userDoc.data();
-        const newGroups = data.group;
+        const newGroups = data.groups;
         const newSelectedEvents = data.selectedEvents;
         setGroupList(newGroups);
         setSelectedEvents(newSelectedEvents);
