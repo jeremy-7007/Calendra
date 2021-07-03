@@ -105,6 +105,11 @@ function PostsScreen({ navigation }) {
     }, [])
   );
 
+  const onAddPost = () => {
+    if (group === "") alert("Please select a group");
+    else navigation.navigate(routes.ADD_POST, { group });
+  };
+
   return (
     <Screen style={styles.container}>
       <View style={styles.headerBar}>
@@ -113,9 +118,7 @@ function PostsScreen({ navigation }) {
           onValueChange={onPickerChange}
           optionList={groupList}
         />
-        <AddPostButton
-          onPress={() => navigation.navigate(routes.ADD_POST, { group })}
-        />
+        <AddPostButton onPress={onAddPost} />
       </View>
       <FlatList
         data={events}
