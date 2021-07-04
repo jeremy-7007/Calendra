@@ -103,7 +103,7 @@ instead of using events suggested by others. This process is inefficient and ted
 we personally populate with posted events. Moreover, we cannot vote on events in *Google Calendar*, which makes our app less susceptible to 
 malicious parties such as spammers or trolls (which are admittedly more common in larger groups).
 
-## Programe Flow
+## Program Flow
 _* Numbers only indicate scenario_
 
 ![Program_flow](../media/Program_flow.jpeg?raw=true)
