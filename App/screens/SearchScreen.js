@@ -36,10 +36,13 @@ function SearchScreen({ navigation }) {
             // data.events = await info.events;
             // //console.log(info.events);
             data = info;
+            authContext.setGroup(info.id);
+            console.log(info.id);
+            navigation.navigate(routes.GROUP);
         }).catch((error) => alert(error)));
-        console.log(data);
+        //console.log(data);
            
-        navigation.navigate(routes.ACCOUNT);
+        //navigation.navigate(routes.ACCOUNT);
 
     }
 
