@@ -27,18 +27,49 @@ function GroupScreen({ navigation }) {
 
   const refreshEvents = () => {
     setRefreshing(true);
-    eventsRef
-      .orderBy("score")
+    groupRef
       .get()
-      .then((snapshot) => {
-        const newEvents = [];
-        snapshot.docs.forEach((doc) => {
-          const event = doc.data();
-          newEvents.push(event);
-        });
-        setEvents(newEvents.reverse());
+      .then(async (groupDoc) => {
+        const groupEvents = [];
+        const data = groupDoc.data();
+        // const newGroups = data.group;
+        const listOfEvents = await data.events;
+        if (listOfEvents == []) return;
+        await Promise.all(listOfEvents.map(async (eventId) => {
+          const loading = await eventsRef.doc(eventId).get().then(async (doc) => {
+            const event = await doc.data();
+            const loading2 = await groupEvents.push(event);
+            console.log(event);
+          })
+        }))
+
+        // data.events.forEach(async (eventName) => {
+        //   //console.log(eventName);
+        //   const event = await eventsRef.doc(eventName).get().then((event) => {
+        //     const eachGroupEvent = event.data();
+        //     //console.log(eachGroupEvent);
+        //     groupEvents.push(eachGroupEvent);
+        //   });
+        //   // console.log(event);
+        //   // groupEvents.push(event);
+        // });
+        console.log(groupEvents);
+        setEvents(groupEvents);
       })
       .catch((error) => alert(error));
+
+    // eventsRef
+    //   .orderBy("score")
+    //   .get()
+    //   .then((snapshot) => {
+    //     const newEvents = [];
+    //     snapshot.docs.forEach((doc) => {
+    //       const event = doc.data();
+    //       newEvents.push(event);
+    //     });
+    //     setEvents(newEvents.reverse());
+    //   })
+    //   .catch((error) => alert(error));
 
     // groupsRef
     //   .doc(groupName)
@@ -64,18 +95,19 @@ function GroupScreen({ navigation }) {
     //   .catch((error) => alert(error));
     setRefreshing(false);
   };
-  const fetchGroupData = () => {
-    groupRef
-      .get()
-      .then((groupDoc) => {
-        const data = groupDoc.data();
-        // const newGroups = data.group;
-        const events = data.events;
-        // setGroupList(newGroups);
-        setSelectedEvents(events);
-      })
-      .catch((error) => alert(error));
-  };
+
+  // const fetchGroupData = () => {
+  //   groupRef
+  //     .get()
+  //     .then((groupDoc) => {
+  //       const data = groupDoc.data();
+  //       // const newGroups = data.group;
+  //       const events = data.events;
+  //       // setGroupList(newGroups);
+  //       setSelectedEvents(events);
+  //     })
+  //     .catch((error) => alert(error));
+  // };
 
   const filterArray = (inArray, notInArray) => {
     const condition = (item) => {
@@ -94,14 +126,9 @@ function GroupScreen({ navigation }) {
     }
   };
 
-  const onPickerChange = (itemValue) => {
-    setGroup(itemValue);
-    refreshEvents();
-  };
-
   useFocusEffect(
     useCallback(() => {
-      fetchGroupData();
+      // fetchGroupData();
       refreshEvents();
     }, [])
   );
