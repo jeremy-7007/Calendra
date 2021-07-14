@@ -24,20 +24,21 @@ function PostsScreen({ navigation }) {
   const groupsRef = firebase.firestore().collection("groups");
   const userRef = firebase.firestore().collection("users").doc(user.id);
 
-  const refreshEvents = () => {
+  const refreshEvents = (groupName) => {
     setRefreshing(true);
-    eventsRef
-      .orderBy("score")
-      .get()
-      .then((snapshot) => {
-        const newEvents = [];
-        snapshot.docs.forEach((doc) => {
-          const event = doc.data();
-          newEvents.push(event);
-        });
-        setEvents(newEvents.reverse());
-      })
-      .catch((error) => alert(error));
+
+    // eventsRef
+    //   .orderBy("score")
+    //   .get()
+    //   .then((snapshot) => {
+    //     const newEvents = [];
+    //     snapshot.docs.forEach((doc) => {
+    //       const event = doc.data();
+    //       newEvents.push(event);
+    //     });
+    //     setEvents(newEvents.reverse());
+    //   })
+    //   .catch((error) => alert(error));
 
     // groupsRef
     //   .doc(groupName)
@@ -61,6 +62,30 @@ function PostsScreen({ navigation }) {
     //     setEvents(newEvents);
     //   })
     //   .catch((error) => alert(error));
+
+    groupsRef
+      .doc(groupName)
+      .get()
+      .then(async (groupDoc) => {
+        const groupEvents = [];
+        const data = groupDoc.data();
+        const listOfEvents = await data.events;
+        if (listOfEvents == []) return;
+        await Promise.all(
+          listOfEvents.map(async (eventId) => {
+            const loading = await eventsRef
+              .doc(eventId)
+              .get()
+              .then(async (doc) => {
+                const event = await doc.data();
+                const loading2 = await groupEvents.push(event);
+              });
+          })
+        );
+        setEvents(groupEvents);
+      })
+      .catch((error) => alert(error));
+
     setRefreshing(false);
   };
   const fetchUserData = () => {
@@ -68,7 +93,7 @@ function PostsScreen({ navigation }) {
       .get()
       .then((userDoc) => {
         const data = userDoc.data();
-        const newGroups = data.group;
+        const newGroups = data.groups;
         const newSelectedEvents = data.selectedEvents;
         setGroupList(newGroups);
         setSelectedEvents(newSelectedEvents);
@@ -95,13 +120,13 @@ function PostsScreen({ navigation }) {
 
   const onPickerChange = (itemValue) => {
     setGroup(itemValue);
-    refreshEvents();
+    refreshEvents(itemValue);
   };
 
   useFocusEffect(
     useCallback(() => {
       fetchUserData();
-      refreshEvents();
+      refreshEvents(group);
     }, [])
   );
 
@@ -124,7 +149,7 @@ function PostsScreen({ navigation }) {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() => refreshEvents()}
+            onRefresh={() => refreshEvents(group)}
             colors={[colors.primary]}
           />
         }
