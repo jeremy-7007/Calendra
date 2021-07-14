@@ -10,4 +10,5 @@ export default Object.freeze({
   WELCOME: "Welcome",
   ADD_POST: "AddPost",
   POSTS: "Posts",
+  SELECTED: "Selected",
 });

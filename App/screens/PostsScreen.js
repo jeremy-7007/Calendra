@@ -1,5 +1,11 @@
-import React, { useState, useCallback, useContext } from "react";
-import { StyleSheet, FlatList, RefreshControl, View } from "react-native";
+import React, { useState, useCallback, useContext, useEffect } from "react";
+import {
+  StyleSheet,
+  FlatList,
+  RefreshControl,
+  View,
+  Button,
+} from "react-native";
 import { firebase } from "../../firebase/config";
 import { useFocusEffect } from "@react-navigation/native";
 import Picker from "../components/AppPicker";
@@ -24,43 +30,43 @@ function PostsScreen({ navigation }) {
   const groupsRef = firebase.firestore().collection("groups");
   const userRef = firebase.firestore().collection("users").doc(user.id);
 
-  const refreshEvents = () => {
+  const refreshEvents = (groupName) => {
     setRefreshing(true);
-    eventsRef
-      .orderBy("score")
+    // eventsRef
+    //   .orderBy("score")
+    //   .get()
+    //   .then((snapshot) => {
+    //     const newEvents = [];
+    //     snapshot.docs.forEach((doc) => {
+    //       const event = doc.data();
+    //       newEvents.push(event);
+    //     });
+    //     setEvents(newEvents.reverse());
+    //   })
+    //   .catch((error) => alert(error));
+
+    groupsRef
+      .doc(groupName)
       .get()
-      .then((snapshot) => {
+      .then((groupDoc) => {
+        const groupEventIds = groupDoc.data().events;
+        const displayEventIds = filterArray(groupEventIds, selectedEvents);
         const newEvents = [];
-        snapshot.docs.forEach((doc) => {
-          const event = doc.data();
-          newEvents.push(event);
+        displayEventIds.forEach((eventId) => {
+          eventsRef
+            .doc(eventId)
+            .get()
+            .then((doc) => {
+              const event = doc.data();
+              newEvents.push(event);
+            })
+            .catch((error) => alert(error));
         });
-        setEvents(newEvents.reverse());
+        // newEvents.sort(compareEvents);
+        setEvents(newEvents);
       })
       .catch((error) => alert(error));
 
-    // groupsRef
-    //   .doc(groupName)
-    //   .get()
-    //   .then((groupDoc) => {
-    //     const groupEventIds = groupDoc.data().events;
-    //     const displayEventIds = filterArray(groupEventIds, selectedEvents);
-    //     const newEvents = [];
-    //     displayEventIds.forEach((eventId) => {
-    //       eventsRef
-    //         .doc(eventId)
-    //         .get()
-    //         .then((doc) => {
-    //           const event = doc.data();
-    //           newEvents.push(event);
-    //         })
-    //         .catch((error) => alert(error));
-    //     });
-    //     newEvents.sort(compareEvents);
-    //     console.log(newEvents);
-    //     setEvents(newEvents);
-    //   })
-    //   .catch((error) => alert(error));
     setRefreshing(false);
   };
   const fetchUserData = () => {
@@ -95,13 +101,12 @@ function PostsScreen({ navigation }) {
 
   const onPickerChange = (itemValue) => {
     setGroup(itemValue);
-    refreshEvents();
+    refreshEvents(itemValue);
   };
 
   useFocusEffect(
     useCallback(() => {
       fetchUserData();
-      refreshEvents();
     }, [])
   );
 
@@ -117,9 +122,12 @@ function PostsScreen({ navigation }) {
           value={group}
           onValueChange={onPickerChange}
           optionList={groupList}
+          containerStyle={{ width: "83%" }}
+          mode="dropdown"
         />
         <AddPostButton onPress={onAddPost} />
       </View>
+      <Button title="test" onPress={() => console.log(events)} />
       <FlatList
         data={events}
         keyExtractor={(event) => event.id.toString()}
@@ -127,7 +135,7 @@ function PostsScreen({ navigation }) {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() => refreshEvents()}
+            onRefresh={() => refreshEvents(group)}
             colors={[colors.primary]}
           />
         }
@@ -154,6 +162,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 20,
     alignItems: "center",
+    justifyContent: "space-between",
   },
 });
 
