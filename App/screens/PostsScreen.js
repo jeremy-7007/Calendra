@@ -1,11 +1,5 @@
-import React, { useState, useCallback, useContext, useEffect } from "react";
-import {
-  StyleSheet,
-  FlatList,
-  RefreshControl,
-  View,
-  Button,
-} from "react-native";
+import React, { useState, useCallback, useContext } from "react";
+import { StyleSheet, FlatList, RefreshControl, View } from "react-native";
 import { firebase } from "../../firebase/config";
 import { useFocusEffect } from "@react-navigation/native";
 import Picker from "../components/AppPicker";
@@ -32,40 +26,31 @@ function PostsScreen({ navigation }) {
 
   const refreshEvents = (groupName) => {
     setRefreshing(true);
-    // eventsRef
-    //   .orderBy("score")
-    //   .get()
-    //   .then((snapshot) => {
-    //     const newEvents = [];
-    //     snapshot.docs.forEach((doc) => {
-    //       const event = doc.data();
-    //       newEvents.push(event);
-    //     });
-    //     setEvents(newEvents.reverse());
-    //   })
-    //   .catch((error) => alert(error));
 
-    groupsRef
-      .doc(groupName)
-      .get()
-      .then((groupDoc) => {
-        const groupEventIds = groupDoc.data().events;
-        const displayEventIds = filterArray(groupEventIds, selectedEvents);
-        const newEvents = [];
-        displayEventIds.forEach((eventId) => {
-          eventsRef
-            .doc(eventId)
-            .get()
-            .then((doc) => {
-              const event = doc.data();
-              newEvents.push(event);
+    if (groupName !== "") {
+      groupsRef
+        .doc(groupName)
+        .get()
+        .then(async (groupDoc) => {
+          const groupEvents = [];
+          const data = groupDoc.data();
+          const listOfEvents = await data.events;
+          if (listOfEvents == []) return;
+          await Promise.all(
+            listOfEvents.map(async (eventId) => {
+              await eventsRef
+                .doc(eventId)
+                .get()
+                .then(async (doc) => {
+                  const event = await doc.data();
+                  groupEvents.push(event);
+                });
             })
-            .catch((error) => alert(error));
-        });
-        // newEvents.sort(compareEvents);
-        setEvents(newEvents);
-      })
-      .catch((error) => alert(error));
+          );
+          setEvents(groupEvents);
+        })
+        .catch((error) => alert(error));
+    }
 
     setRefreshing(false);
   };
@@ -107,6 +92,7 @@ function PostsScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       fetchUserData();
+      refreshEvents(group);
     }, [])
   );
 
@@ -127,7 +113,6 @@ function PostsScreen({ navigation }) {
         />
         <AddPostButton onPress={onAddPost} />
       </View>
-      <Button title="test" onPress={() => console.log(events)} />
       <FlatList
         data={events}
         keyExtractor={(event) => event.id.toString()}

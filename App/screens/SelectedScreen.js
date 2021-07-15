@@ -1,5 +1,5 @@
-import React, { useState, useContext, useCallback, useEffect } from "react";
-import { StyleSheet, FlatList, RefreshControl, Button } from "react-native";
+import React, { useState, useContext, useCallback } from "react";
+import { StyleSheet, FlatList, RefreshControl } from "react-native";
 import { firebase } from "../../firebase/config";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -26,33 +26,24 @@ function SelectedScreen({ navigation }) {
     const newSelected = [];
     userRef
       .get()
-      .then((userDoc) => {
-        return userDoc.data().selectedEvents;
-        // selectedIds.forEach((eventId) => {
-        //   eventsRef
-        //     .doc(eventId)
-        //     .get()
-        //     .then((eventDoc) => {
-        //       const event = eventDoc.data();
-        //       newSelected.push(event);
-        //     })
-        //     .catch((error) => alert(error));
-        // });
+      .then(async (userDoc) => {
+        const selectedIds = await userDoc.data().selectedEvents;
+        if (selectedIds !== []) {
+          await Promise.all(
+            selectedIds.map(async (eventId) => {
+              await eventsRef
+                .doc(eventId)
+                .get()
+                .then(async (eventDoc) => {
+                  const event = await eventDoc.data();
+                  newSelected.push(event);
+                })
+                .catch((error) => alert(error));
+            })
+          );
+          setEvents(newSelected);
+        }
       })
-      .then((selectedIds) => {
-        eventsRef
-          .get()
-          .then((snapshot) => {
-            snapshot.docs.forEach((doc) => {
-              if (selectedIds.includes(doc.id)) {
-                const event = doc.data();
-                newSelected.push(event);
-              }
-            });
-          })
-          .catch((error) => alert(error));
-      })
-      .then(() => setEvents(newSelected))
       .catch((error) => alert(error));
 
     setRefreshing(false);
@@ -81,7 +72,6 @@ function SelectedScreen({ navigation }) {
     <Screen style={styles.container}>
       <BackButton onPress={() => navigation.navigate(routes.SETTING)} />
       <Text style={styles.pageTitle}>Selected events</Text>
-      <Button title="test" onPress={() => console.log(events)} />
       <FlatList
         data={events}
         keyExtractor={(event) => event.id.toString()}
@@ -96,7 +86,7 @@ function SelectedScreen({ navigation }) {
         renderItem={({ item }) => (
           <SelectedItem
             title={item.title}
-            dateTime={item.dateTime}
+            dateTime={item.dateTime.toDate()}
             id={item.id}
           />
         )}
