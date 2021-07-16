@@ -142,16 +142,17 @@ function GroupScreen({ navigation }) {
 
   return (
     <Screen style={styles.container}>
-    <View style={{backgroundColor: "white"}}>
-      <ProfileImage
-        style={styles.profileImage}
-        imageUri={groupRef.get().groupImage}
-        onChangeImage={changeImage}
-        icon="account"
-      />
-    </View>
+      <View style={{backgroundColor: "white"}}>
+        <ProfileImage
+          style={styles.profileImage}
+          imageUri={groupRef.get().groupImage}
+          onChangeImage={changeImage}
+          icon="account"
+        />
+      </View>
+      
       <Text style={styles.displayName}>{group}</Text>
-    <View>
+    
       <FlatList
         data={events}
         keyExtractor={(event) => event.id.toString()}
@@ -172,7 +173,6 @@ function GroupScreen({ navigation }) {
           />
         )}
       />
-    </View>
     </Screen>
   );
 }

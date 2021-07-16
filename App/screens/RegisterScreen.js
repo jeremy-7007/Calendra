@@ -36,7 +36,8 @@ function RegisterScreen({ navigation }) {
           displayName,
           profileImage: profileImage ? profileImage : null,
           groups: [],
-          selectedEvents: []
+          selectedEvents: [],
+          ignoredEvents: []
         };
         const usersRef = firebase.firestore().collection("users");
         usersRef

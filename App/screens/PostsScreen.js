@@ -63,28 +63,31 @@ function PostsScreen({ navigation }) {
     //   })
     //   .catch((error) => alert(error));
 
-    groupsRef
-      .doc(groupName)
-      .get()
-      .then(async (groupDoc) => {
-        const groupEvents = [];
-        const data = groupDoc.data();
-        const listOfEvents = await data.events;
-        if (listOfEvents == []) return;
-        await Promise.all(
-          listOfEvents.map(async (eventId) => {
-            const loading = await eventsRef
-              .doc(eventId)
-              .get()
-              .then(async (doc) => {
-                const event = await doc.data();
-                const loading2 = await groupEvents.push(event);
-              });
-          })
-        );
-        setEvents(groupEvents);
-      })
-      .catch((error) => alert(error));
+    if (groupName != "") {
+      groupsRef
+        .doc(groupName)
+        .get()
+        .then(async (groupDoc) => {
+          const groupEvents = [];
+          const data = groupDoc.data();
+          const listOfEvents = await data.events;
+          if (listOfEvents == []) return;
+          await Promise.all(
+            listOfEvents.map(async (eventId) => {
+              const loading = await eventsRef
+                .doc(eventId)
+                .get()
+                .then(async (doc) => {
+                  const event = await doc.data();
+                  const loading2 = await groupEvents.push(event);
+                });
+            })
+          );
+          setEvents(groupEvents);
+        })
+        .catch((error) => alert(error));
+    }
+
 
     setRefreshing(false);
   };
@@ -119,6 +122,7 @@ function PostsScreen({ navigation }) {
   };
 
   const onPickerChange = (itemValue) => {
+    console.log(itemValue);
     setGroup(itemValue);
     refreshEvents(itemValue);
   };
