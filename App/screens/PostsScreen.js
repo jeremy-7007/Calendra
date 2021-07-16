@@ -15,6 +15,7 @@ import AuthContext from "../auth/context";
 function PostsScreen({ navigation }) {
   const [events, setEvents] = useState([]);
   const [selectedEvents, setSelectedEvents] = useState([]);
+  const [ignoredEvents, setIgnoredEvents] = useState([]);
   const [group, setGroup] = useState("");
   const [groupList, setGroupList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -36,8 +37,14 @@ function PostsScreen({ navigation }) {
           const data = groupDoc.data();
           const listOfEvents = await data.events;
           if (listOfEvents == []) return;
+          const shownEvents = await tripleFilter(
+            listOfEvents,
+            selectedEvents,
+            ignoredEvents
+          );
+          if (shownEvents == []) return;
           await Promise.all(
-            listOfEvents.map(async (eventId) => {
+            shownEvents.map(async (eventId) => {
               await eventsRef
                 .doc(eventId)
                 .get()
@@ -47,6 +54,7 @@ function PostsScreen({ navigation }) {
                 });
             })
           );
+          groupEvents.sort(compareEvents);
           setEvents(groupEvents);
         })
         .catch((error) => alert(error));
@@ -54,39 +62,45 @@ function PostsScreen({ navigation }) {
 
     setRefreshing(false);
   };
+
   const fetchUserData = () => {
     userRef
       .get()
-      .then((userDoc) => {
-        const data = userDoc.data();
-        const newGroups = data.groups;
-        const newSelectedEvents = data.selectedEvents;
+      .then(async (userDoc) => {
+        const data = await userDoc.data();
+        const newGroups = await data.groups;
+        const newSelectedEvents = await data.selectedEvents;
+        const newIgnoredEvents = await data.ignoredEvents;
         setGroupList(newGroups);
         setSelectedEvents(newSelectedEvents);
+        setIgnoredEvents(newIgnoredEvents);
       })
       .catch((error) => alert(error));
   };
 
-  const filterArray = (inArray, notInArray) => {
+  const tripleFilter = (inArray, notInArray1, notInArray2) => {
     const condition = (item) => {
-      return !notInArray.includes(item);
+      return !notInArray1.includes(item) && !notInArray2.includes(item);
     };
     const result = inArray.filter(condition);
     return result;
   };
   const compareEvents = (a, b) => {
-    if (a.score > b.score) {
-      return -1;
-    } else if (a.score < b.score) {
-      return 1;
-    } else {
-      return 0;
-    }
+    return b.score - a.score;
   };
 
   const onPickerChange = (itemValue) => {
     setGroup(itemValue);
     refreshEvents(itemValue);
+  };
+
+  const onAddPost = () => {
+    if (group === "") alert("Please select a group");
+    else navigation.navigate(routes.ADD_POST, { group });
+  };
+
+  const onInvisible = (id) => {
+    setEvents(events.filter((event) => event.id !== id));
   };
 
   useFocusEffect(
@@ -95,11 +109,6 @@ function PostsScreen({ navigation }) {
       refreshEvents(group);
     }, [])
   );
-
-  const onAddPost = () => {
-    if (group === "") alert("Please select a group");
-    else navigation.navigate(routes.ADD_POST, { group });
-  };
 
   return (
     <Screen style={styles.container}>
@@ -130,6 +139,7 @@ function PostsScreen({ navigation }) {
             dateTime={item.dateTime.toDate()}
             score={item.score}
             id={item.id}
+            onInvisible={() => onInvisible(item.id)}
           />
         )}
       />
