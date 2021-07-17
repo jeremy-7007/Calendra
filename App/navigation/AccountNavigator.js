@@ -23,13 +23,23 @@ const AccountNavigator = () => (
       options={{ headerShown: false }}
     />
     <Stack.Screen
-      name="Search"
+      name="New Group"
       component={CreateGroupScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Search"
+      component={SearchScreen}
       options={{ headerShown: false }}
     />
     <Stack.Screen
       name="Setting"
       component={SettingScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Group Screen"
+      component={GroupScreen}
       options={{ headerShown: false }}
     />
     <Stack.Screen

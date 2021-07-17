@@ -43,9 +43,12 @@ function AccountScreen({ navigation }) {
       />
       <Button
         title="New Group"
-        onPress={() => navigation.navigate(routes.SEARCH)}
+        onPress={() => navigation.navigate(routes.CREATEGROUP)}
       />
-      <Button title="Search Groups" />
+      <Button 
+        title="Search Groups"
+        onPress={() => navigation.navigate(routes.SEARCH)} 
+      />
       <Button
         title="Settings"
         onPress={() => navigation.navigate(routes.SETTING)}
