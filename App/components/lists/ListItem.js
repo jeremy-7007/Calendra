@@ -11,18 +11,44 @@ import AddButton from "./AddButton";
 import IgnoreButton from "./IgnoreButton";
 import AuthContext from "../../auth/context";
 
-function ListItem({ title, dateTime, score, id, onInvisible }) {
-  const [visible, setVisible] = useState(true);
+function ListItem({
+  title,
+  dateTime,
+  score,
+  id,
+  onInvisible,
+  selected = false,
+  ignored = false,
+}) {
+  // const [visible, setVisible] = useState(true);
   const { user } = useContext(AuthContext);
 
   const userRef = firebase.firestore().collection("users").doc(user.id);
 
   const notificationContent = { title: "Event reminder", body: title };
 
+  // async function checkAdd() {
+  //   var result = false;
+  //   await Promise.all(
+  //     userRef.get().then(async (userDoc) => {
+  //       const data = await userDoc.data();
+  //       const listSelectedEvents = await data.selectedEvents;
+  //       if (listSelectedEvents == null) return;
+  //       await listSelectedEvents.map((event) => {
+  //         console.log(event);
+  //         if (event == id) result = true;
+  //       });
+  //     })
+  //   );
+  //   console.log(result);
+  //   return result;
+  // }
+
   function handleAdd() {
     userRef
       .update({
         selectedEvents: firebase.firestore.FieldValue.arrayUnion(id),
+        ignoredEvents: firebase.firestore.FieldValue.arrayRemove(id),
       })
       .catch((error) => alert(error));
     Notifications.scheduleNotificationAsync({
@@ -36,13 +62,14 @@ function ListItem({ title, dateTime, score, id, onInvisible }) {
   function handleIgnore() {
     userRef
       .update({
+        selectedEvents: firebase.firestore.FieldValue.arrayRemove(id),
         ignoredEvents: firebase.firestore.FieldValue.arrayUnion(id),
       })
       .catch((error) => alert(error));
     onInvisible();
   }
 
-  if (visible) {
+  if (true) {
     return (
       <View style={styles.container}>
         <View style={styles.infoContainer}>
@@ -56,8 +83,8 @@ function ListItem({ title, dateTime, score, id, onInvisible }) {
           <VoteCounter originalScore={score} id={id} />
         </View>
         <View style={styles.buttonContainer}>
-          <AddButton onPress={handleAdd} />
-          <IgnoreButton onPress={handleIgnore} />
+          {!selected && <AddButton onPress={handleAdd} />}
+          {!ignored && <IgnoreButton onPress={handleIgnore} />}
         </View>
       </View>
     );

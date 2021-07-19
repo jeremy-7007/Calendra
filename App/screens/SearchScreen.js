@@ -42,9 +42,6 @@ function SearchScreen({ navigation }) {
         })
         .catch((error) => alert(error))
     );
-    console.log(data);
-
-    navigation.navigate(routes.GROUP);
   };
 
   return (

@@ -7,6 +7,7 @@ import SettingScreen from "../screens/SettingScreen";
 import SearchScreen from "../screens/SearchScreen";
 import CreateGroupScreen from "../screens/CreateGroupScreen";
 import SelectedScreen from "../screens/SelectedScreen";
+import GroupScreen from "../screens/GroupScreen";
 
 const Stack = createStackNavigator();
 

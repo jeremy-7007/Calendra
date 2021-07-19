@@ -16,47 +16,68 @@ import ProfileImage from "../components/ProfileImage";
 function GroupScreen({ navigation }) {
   const [events, setEvents] = useState([]);
   const [selectedEvents, setSelectedEvents] = useState([]);
-  // const [group, setGroup] = useState("");
+  const [ignoredEvents, setIgnoredEvents] = useState([]);
   const [groupList, setGroupList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const { group } = useContext(AuthContext);
+  const { user, group } = useContext(AuthContext);
 
   const eventsRef = firebase.firestore().collection("events");
-  const groupRef = firebase.firestore().collection("groups").doc(group);
-  // const userRef = firebase.firestore().collection("users").doc(user.id);
+  const groupRef = firebase.firestore().collection("groups");
+  const userRef = firebase.firestore().collection("users").doc(user.id);
 
-  const refreshEvents = () => {
-    setRefreshing(true);
-    groupRef
+  const fetchUserData = () => {
+    userRef
       .get()
-      .then(async (groupDoc) => {
-        const groupEvents = [];
-        const data = groupDoc.data();
-        // const newGroups = data.group;
-        const listOfEvents = await data.events;
-        if (listOfEvents == []) return;
-        await Promise.all(listOfEvents.map(async (eventId) => {
-          const loading = await eventsRef.doc(eventId).get().then(async (doc) => {
-            const event = await doc.data();
-            const loading2 = await groupEvents.push(event);
-            console.log(event);
-          })
-        }))
-
-        // data.events.forEach(async (eventName) => {
-        //   //console.log(eventName);
-        //   const event = await eventsRef.doc(eventName).get().then((event) => {
-        //     const eachGroupEvent = event.data();
-        //     //console.log(eachGroupEvent);
-        //     groupEvents.push(eachGroupEvent);
-        //   });
-        //   // console.log(event);
-        //   // groupEvents.push(event);
-        // });
-        console.log(groupEvents);
-        setEvents(groupEvents);
+      .then(async (userDoc) => {
+        const data = await userDoc.data();
+        const newSelectedEvents = await data.selectedEvents;
+        const newIgnoredEvents = await data.ignoredEvents;
+        setSelectedEvents(newSelectedEvents);
+        setIgnoredEvents(newIgnoredEvents);
       })
       .catch((error) => alert(error));
+  };
+
+  const refreshEvents = (groupName) => {
+    setRefreshing(true);
+    if (groupName != "") {
+      groupRef
+        .doc(groupName)
+        .get()
+        .then(async (groupDoc) => {
+          const groupEvents = [];
+          const data = groupDoc.data();
+          // const newGroups = data.group;
+          const listOfEvents = await data.events;
+          if (listOfEvents == []) return;
+          await Promise.all(
+            listOfEvents.map(async (eventId) => {
+              const loading = await eventsRef
+                .doc(eventId)
+                .get()
+                .then(async (doc) => {
+                  const event = await doc.data();
+                  const loading2 = await groupEvents.push(event);
+                  //console.log(event);
+                });
+            })
+          );
+
+          // data.events.forEach(async (eventName) => {
+          //   //console.log(eventName);
+          //   const event = await eventsRef.doc(eventName).get().then((event) => {
+          //     const eachGroupEvent = event.data();
+          //     //console.log(eachGroupEvent);
+          //     groupEvents.push(eachGroupEvent);
+          //   });
+          //   // console.log(event);
+          //   // groupEvents.push(event);
+          // });
+          //console.log(groupEvents);
+          setEvents(groupEvents);
+        })
+        .catch((error) => alert(error));
+    }
 
     // eventsRef
     //   .orderBy("score")
@@ -128,21 +149,23 @@ function GroupScreen({ navigation }) {
 
   useFocusEffect(
     useCallback(() => {
-      // fetchGroupData();
-      refreshEvents();
+      fetchUserData();
+      refreshEvents(group);
     }, [])
   );
 
   const changeImage = (newImage) => {
-    groupRef
-      .update("profileImage", newImage)
-      .catch((error) => alert(error));
+    groupRef.update("profileImage", newImage).catch((error) => alert(error));
     navigation.navigate(routes.GROUP);
+  };
+
+  const onInvisible = (id) => {
+    setEvents(events.filter((event) => event.id !== id));
   };
 
   return (
     <Screen style={styles.container}>
-      <View style={{backgroundColor: "white"}}>
+      <View style={{ backgroundColor: "white" }}>
         <ProfileImage
           style={styles.profileImage}
           imageUri={groupRef.get().groupImage}
@@ -150,9 +173,9 @@ function GroupScreen({ navigation }) {
           icon="account"
         />
       </View>
-      
+
       <Text style={styles.displayName}>{group}</Text>
-    
+
       <FlatList
         data={events}
         keyExtractor={(event) => event.id.toString()}
@@ -170,6 +193,9 @@ function GroupScreen({ navigation }) {
             dateTime={item.dateTime.toDate()}
             score={item.score}
             id={item.id}
+            onInvisible={() => onInvisible(item.id)}
+            selected={selectedEvents.includes(item.id)}
+            ignored={ignoredEvents.includes(item.id)}
           />
         )}
       />
@@ -193,10 +219,10 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     marginBottom: 30,
-    },
-    // profileImage: {
-    //   resizeMode: "center"
-    // }
+  },
+  // profileImage: {
+  //   resizeMode: "center"
+  // }
 });
 
 export default GroupScreen;
