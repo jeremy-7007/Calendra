@@ -1,36 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { firebase } from "../../firebase/config";
 
 import colors from "../config/colors";
 import IconButton from "./IconButton";
 import Text from "./Text";
+import AuthContext from "../auth/context";
 
-function VoteCounter({ originalScore, id }) {
-  const [upvote, setUpvote] = useState(false);
-  const [downvote, setDownvote] = useState(false);
+function VoteCounter({ originalScore, id, voteState = 0 }) {
+  const [upvote, setUpvote] = useState(voteState >= 1 ? true : false);
+  const [downvote, setDownvote] = useState(voteState <= -1 ? true : false);
   const [score, setScore] = useState(originalScore);
+  const { user } = useContext(AuthContext);
 
   const docRef = firebase.firestore().collection("events").doc(id);
+  const userRef = firebase.firestore().collection("users").doc(user.id);
 
-  function updateBackend(addScore) {
+  function updateScore(addScore) {
     docRef
       .update({ score: firebase.firestore.FieldValue.increment(addScore) })
       .catch((error) => alert(error));
+  }
+
+  function updateVote(vote) {
+    if (vote >= 1) {
+      userRef
+        .update({
+          upvotedEvents: firebase.firestore.FieldValue.arrayUnion(id),
+          downvotedEvents: firebase.firestore.FieldValue.arrayRemove(id),
+        })
+        .catch((error) => alert(error));
+    } else if (vote === 0) {
+      userRef
+        .update({
+          upvotedEvents: firebase.firestore.FieldValue.arrayRemove(id),
+          downvotedEvents: firebase.firestore.FieldValue.arrayRemove(id),
+        })
+        .catch((error) => alert(error));
+    } else {
+      userRef
+        .update({
+          upvotedEvents: firebase.firestore.FieldValue.arrayRemove(id),
+          downvotedEvents: firebase.firestore.FieldValue.arrayUnion(id),
+        })
+        .catch((error) => alert(error));
+    }
   }
 
   function onPressUp() {
     if (downvote) {
       setScore(score + 2);
       setDownvote(!downvote);
-      updateBackend(2);
+      updateScore(2);
+      updateVote(1);
     } else {
       if (!upvote) {
         setScore(score + 1);
-        updateBackend(1);
+        updateScore(1);
+        updateVote(1);
       } else {
         setScore(score - 1);
-        updateBackend(-1);
+        updateScore(-1);
+        updateVote(0);
       }
     }
     setUpvote(!upvote);
@@ -40,14 +71,17 @@ function VoteCounter({ originalScore, id }) {
     if (upvote) {
       setScore(score - 2);
       setUpvote(!upvote);
-      updateBackend(-2);
+      updateScore(-2);
+      updateVote(-1);
     } else {
       if (!downvote) {
         setScore(score - 1);
-        updateBackend(-1);
+        updateScore(-1);
+        updateVote(-1);
       } else {
         setScore(score + 1);
-        updateBackend(1);
+        updateScore(1);
+        updateVote(0);
       }
     }
     setDownvote(!downvote);

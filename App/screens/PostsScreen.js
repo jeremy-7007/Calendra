@@ -16,6 +16,8 @@ function PostsScreen({ navigation }) {
   const [events, setEvents] = useState([]);
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [ignoredEvents, setIgnoredEvents] = useState([]);
+  const [upvotedEvents, setUpvotedEvents] = useState([]);
+  const [downvotedEvents, setDownvotedEvents] = useState([]);
   const [group, setGroup] = useState("");
   const [groupList, setGroupList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -50,6 +52,7 @@ function PostsScreen({ navigation }) {
                 .get()
                 .then(async (doc) => {
                   const event = await doc.data();
+                  event.vote = checkVote(event.id);
                   groupEvents.push(event);
                 });
             })
@@ -71,9 +74,13 @@ function PostsScreen({ navigation }) {
         const newGroups = await data.groups;
         const newSelectedEvents = await data.selectedEvents;
         const newIgnoredEvents = await data.ignoredEvents;
+        const newUpvotedEvents = await data.upvotedEvents;
+        const newDownvotedEvents = await data.downvotedEvents;
         setGroupList(newGroups);
         setSelectedEvents(newSelectedEvents);
         setIgnoredEvents(newIgnoredEvents);
+        setUpvotedEvents(newUpvotedEvents);
+        setDownvotedEvents(newDownvotedEvents);
       })
       .catch((error) => alert(error));
   };
@@ -87,6 +94,12 @@ function PostsScreen({ navigation }) {
   };
   const compareEvents = (a, b) => {
     return b.score - a.score;
+  };
+
+  const checkVote = (id) => {
+    if (upvotedEvents.includes(id)) return 1;
+    else if (downvotedEvents.includes(id)) return -1;
+    else return 0;
   };
 
   const onPickerChange = (itemValue) => {
@@ -140,6 +153,7 @@ function PostsScreen({ navigation }) {
             score={item.score}
             id={item.id}
             onInvisible={() => onInvisible(item.id)}
+            voteState={item.vote}
           />
         )}
       />
