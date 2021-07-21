@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { firebase } from "../../firebase/config";
+import AuthContext from "../auth/context";
 
 import colors from "../config/colors";
 import IconButton from "./IconButton";
@@ -12,6 +13,7 @@ function VoteCounter({ originalScore, id }) {
   const [score, setScore] = useState(originalScore);
 
   const docRef = firebase.firestore().collection("events").doc(id);
+  const userRef = firebase.firestore().collection("users").doc;
 
   function updateBackend(addScore) {
     docRef

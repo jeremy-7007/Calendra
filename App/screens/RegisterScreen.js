@@ -41,6 +41,8 @@ function RegisterScreen({ navigation }) {
           groups: [],
           selectedEvents: [],
           ignoredEvents: [],
+          upvote: [],
+          downvote: [],
         };
         const usersRef = firebase.firestore().collection("users");
         usersRef

@@ -1,5 +1,12 @@
 import React, { useState, useCallback, useContext } from "react";
-import { StyleSheet, FlatList, RefreshControl, View, Text } from "react-native";
+import {
+  StyleSheet,
+  FlatList,
+  RefreshControl,
+  View,
+  Text,
+  Button,
+} from "react-native";
 import { firebase } from "../../firebase/config";
 import { useFocusEffect } from "@react-navigation/native";
 import Picker from "../components/AppPicker";
@@ -130,23 +137,6 @@ function GroupScreen({ navigation }) {
   //     .catch((error) => alert(error));
   // };
 
-  const filterArray = (inArray, notInArray) => {
-    const condition = (item) => {
-      return !notInArray.includes(item);
-    };
-    const result = inArray.filter(condition);
-    return result;
-  };
-  const compareEvents = (a, b) => {
-    if (a.score > b.score) {
-      return -1;
-    } else if (a.score < b.score) {
-      return 1;
-    } else {
-      return 0;
-    }
-  };
-
   useFocusEffect(
     useCallback(() => {
       fetchUserData();
@@ -155,12 +145,27 @@ function GroupScreen({ navigation }) {
   );
 
   const changeImage = (newImage) => {
-    groupRef.update("profileImage", newImage).catch((error) => alert(error));
+    groupRef
+      .doc(group)
+      .update("profileImage", newImage)
+      .catch((error) => alert(error));
     navigation.navigate(routes.GROUP);
   };
 
-  const onInvisible = (id) => {
-    setEvents(events.filter((event) => event.id !== id));
+  const onInvisible = (id) => (type) => {
+    if (type == "ignore") {
+      setSelectedEvents(selectedEvents.filter((event) => event.id !== id));
+      setIgnoredEvents(ignoredEvents.push(id));
+      // setEvents(events.filter((event) => event.id !== id));
+      // setEvents(events.push(id));
+      // refreshEvents(group);
+    } else if (type == "add") {
+      setIgnoredEvents(ignoredEvents.filter((event) => event.id !== id));
+      setSelectedEvents(selectedEvents.push(id));
+      // setEvents(events.filter((event) => event.id !== id));
+      // setEvents(events.push(id));
+      // refreshEvents(group);
+    }
   };
 
   return (
@@ -168,13 +173,15 @@ function GroupScreen({ navigation }) {
       <View style={{ backgroundColor: "white" }}>
         <ProfileImage
           style={styles.profileImage}
-          imageUri={groupRef.get().groupImage}
+          imageUri={groupRef.doc(group).get().groupImage}
           onChangeImage={changeImage}
           icon="account"
         />
       </View>
 
       <Text style={styles.displayName}>{group}</Text>
+
+      <Button title={"Follow"} />
 
       <FlatList
         data={events}
@@ -183,7 +190,7 @@ function GroupScreen({ navigation }) {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() => refreshEvents()}
+            onRefresh={() => refreshEvents(group)}
             colors={[colors.primary]}
           />
         }
