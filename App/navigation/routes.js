@@ -2,6 +2,7 @@ export default Object.freeze({
   ACCOUNT: "Account Screen",
   ACCOUNTNAV: "Account",
   CALENDAR: "Calendar",
+  CREATEGROUP: "New Group",
   LOGIN: "Login",
   MYGROUPS: "My Groups",
   REGISTER: "Register",

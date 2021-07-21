@@ -71,7 +71,7 @@ function SelectedScreen({ navigation }) {
   return (
     <Screen style={styles.container}>
       <BackButton onPress={() => navigation.navigate(routes.SETTING)} />
-      <Text style={styles.pageTitle}>Selected events</Text>
+      <Text style={styles.pageTitle}>Selected Events</Text>
       <FlatList
         data={events}
         keyExtractor={(event) => event.id.toString()}
