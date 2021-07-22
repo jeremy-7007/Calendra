@@ -1,5 +1,11 @@
 import React, { useState, useCallback, useContext } from "react";
-import { StyleSheet, FlatList, RefreshControl, View } from "react-native";
+import {
+  StyleSheet,
+  FlatList,
+  RefreshControl,
+  View,
+  Image,
+} from "react-native";
 import { firebase } from "../../firebase/config";
 import { useFocusEffect } from "@react-navigation/native";
 import Picker from "../components/AppPicker";

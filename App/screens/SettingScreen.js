@@ -16,6 +16,10 @@ function SettingScreen({ navigation }) {
         title="See selected events"
         onPress={() => navigation.navigate(routes.SELECTED)}
       />
+      <Button
+        title="Edit profile"
+        onPress={() => navigation.navigate(routes.EDIT_PROFILE)}
+      />
     </Screen>
   );
 }
