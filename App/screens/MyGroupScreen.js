@@ -7,7 +7,7 @@ import Text from "../components/Text";
 import Screen from "../components/Screen";
 import routes from "../navigation/routes";
 import ListItemSeparator from "../components/lists/ListItemSeparator";
-import GroupList from "../components/lists/GroupList";
+import GroupListItem from "../components/lists/GroupListItem";
 import AuthContext from "../auth/context";
 import colors from "../config/colors";
 
@@ -58,7 +58,7 @@ function MyGroupScreen({ navigation }) {
         keyExtractor={(group) => group.id.toString()}
         ItemSeparatorComponent={ListItemSeparator}
         renderItem={({ item }) => (
-          <GroupList
+          <GroupListItem
             title={item.groupName}
             image={item.groupImage}
             onPress={() => navigation.navigate(routes.ACCOUNT)}
