@@ -12,28 +12,11 @@ import routes from "../navigation/routes";
 function AccountScreen({ navigation }) {
   const { user, setUser } = useContext(AuthContext);
 
-  const changeImage = (newImage) => {
-    const uid = user.id;
-    const usersRef = firebase.firestore().collection("users");
-    usersRef
-      .doc(uid)
-      .update("profileImage", newImage)
-      .catch((error) => alert(error));
-    usersRef
-      .doc(uid)
-      .get()
-      .then((firestoreDocument) => {
-        const user = firestoreDocument.data();
-        setUser(user);
-      })
-      .catch((error) => alert(error));
-  };
-
   return (
     <Screen style={styles.container}>
       <ProfileImage
         imageUri={user.profileImage}
-        onChangeImage={changeImage}
+        onPress={() => {}}
         icon="account"
       />
       <Text style={styles.displayName}>{user.displayName}</Text>
@@ -45,9 +28,9 @@ function AccountScreen({ navigation }) {
         title="New Group"
         onPress={() => navigation.navigate(routes.CREATEGROUP)}
       />
-      <Button 
+      <Button
         title="Search Groups"
-        onPress={() => navigation.navigate(routes.SEARCH)} 
+        onPress={() => navigation.navigate(routes.SEARCH)}
       />
       <Button
         title="Settings"

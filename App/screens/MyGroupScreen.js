@@ -51,7 +51,7 @@ function MyGroupScreen({ navigation }) {
   return (
     <Screen style={{ padding: 10, backgroundColor: colors.light }}>
       <BackButton onPress={() => navigation.navigate(routes.ACCOUNT)} />
-      <Text style={styles.pageTitle}>My groups</Text>
+      <Text style={styles.pageTitle}>My Groups</Text>
       <FlatList
         style={styles.container}
         data={myGroups}

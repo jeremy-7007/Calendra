@@ -13,4 +13,5 @@ export default Object.freeze({
   POSTS: "Posts",
   SELECTED: "Selected",
   GROUP: "Group Screen",
+  EDIT_PROFILE: "Edit Profile",
 });

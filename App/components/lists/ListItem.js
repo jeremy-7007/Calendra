@@ -17,11 +17,11 @@ function ListItem({
   score,
   id,
   onInvisible,
+  voteState,
   onAdd,
   selected = false,
   ignored = false,
 }) {
-  // const [visible, setVisible] = useState(true);
   const { user } = useContext(AuthContext);
 
   const userRef = firebase.firestore().collection("users").doc(user.id);
@@ -83,7 +83,7 @@ function ListItem({
           <Text style={styles.title} numberOfLines={3}>
             {title}
           </Text>
-          <VoteCounter originalScore={score} id={id} />
+          <VoteCounter originalScore={score} id={id} voteState={voteState} />
         </View>
         <View style={styles.buttonContainer}>
           {!selected && <AddButton onPress={handleAdd} />}
