@@ -68,7 +68,13 @@ function SearchScreen({ navigation }) {
           />
         }
         renderItem={({ item }) => (
-          <SearchListItem imageUri={item.groupImage} name={item.groupName} />
+          <SearchListItem
+            imageUri={item.groupImage}
+            name={item.groupName}
+            onPress={() =>
+              navigation.navigate(routes.GROUP, { group: item.groupName })
+            }
+          />
         )}
       />
     </Screen>

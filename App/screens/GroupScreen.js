@@ -9,24 +9,23 @@ import {
 } from "react-native";
 import { firebase } from "../../firebase/config";
 import { useFocusEffect } from "@react-navigation/native";
-import Picker from "../components/AppPicker";
 
 import ListItem from "../components/lists/ListItem";
 import ListItemSeparator from "../components/lists/ListItemSeparator";
 import Screen from "../components/Screen";
 import colors from "../config/colors";
-import AddPostButton from "../components/AddPostButton";
 import routes from "../navigation/routes";
 import AuthContext from "../auth/context";
 import ProfileImage from "../components/ProfileImage";
 
-function GroupScreen({ navigation }) {
+function GroupScreen({ navigation, route }) {
+  const { group } = route.params;
   const [events, setEvents] = useState([]);
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [ignoredEvents, setIgnoredEvents] = useState([]);
   const [groupList, setGroupList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const { user, group } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const eventsRef = firebase.firestore().collection("events");
   const groupRef = firebase.firestore().collection("groups");
