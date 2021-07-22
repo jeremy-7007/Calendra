@@ -99,7 +99,7 @@ function PostsScreen({ navigation }) {
     else navigation.navigate(routes.ADD_POST, { group });
   };
 
-  const onInvisible = (id) => (doNothing) => {
+  const onInvisible = (id) => {
     setEvents(events.filter((event) => event.id !== id));
   };
 

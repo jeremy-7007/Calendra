@@ -152,20 +152,37 @@ function GroupScreen({ navigation }) {
     navigation.navigate(routes.GROUP);
   };
 
-  const onInvisible = (id) => (type) => {
-    if (type == "ignore") {
-      setSelectedEvents(selectedEvents.filter((event) => event.id !== id));
-      setIgnoredEvents(ignoredEvents.push(id));
-      // setEvents(events.filter((event) => event.id !== id));
-      // setEvents(events.push(id));
-      // refreshEvents(group);
-    } else if (type == "add") {
-      setIgnoredEvents(ignoredEvents.filter((event) => event.id !== id));
-      setSelectedEvents(selectedEvents.push(id));
-      // setEvents(events.filter((event) => event.id !== id));
-      // setEvents(events.push(id));
-      // refreshEvents(group);
-    }
+  // const onInvisible = (id) => (type) => {
+  //   if (type == "ignore") {
+  //     console.log("ignore:");
+  //     setSelectedEvents(selectedEvents.filter((event) => event.id !== id));
+  //     setIgnoredEvents(ignoredEvents.push(id));
+  //     // setEvents(events.filter((event) => event.id !== id));
+  //     // setEvents(events.push(id));
+  //     // refreshEvents(group);
+  //   } else if (type == "add") {
+  //     console.log("add:");
+  //     setIgnoredEvents(ignoredEvents.filter((event) => event.id !== id));
+  //     setSelectedEvents(selectedEvents.push(id));
+  //     // setEvents(events.filter((event) => event.id !== id));
+  //     // setEvents(events.push(id));
+  //     // refreshEvents(group);
+  //   }
+  // };
+
+  const onAdd = async (id) => {
+    await Promise.all(
+      userRef
+        .get()
+        .then(async (userDoc) => {
+          const data = await userDoc.data();
+          const newSelectedEvents = await data.selectedEvents;
+          const newIgnoredEvents = await data.ignoredEvents;
+          setSelectedEvents(newSelectedEvents);
+          setIgnoredEvents(newIgnoredEvents);
+        })
+        .catch((error) => alert(error))
+    );
   };
 
   return (
@@ -200,7 +217,8 @@ function GroupScreen({ navigation }) {
             dateTime={item.dateTime.toDate()}
             score={item.score}
             id={item.id}
-            onInvisible={() => onInvisible(item.id)}
+            onInvisible={() => {}}
+            onAdd={() => onAdd(item.id)}
             selected={selectedEvents.includes(item.id)}
             ignored={ignoredEvents.includes(item.id)}
           />

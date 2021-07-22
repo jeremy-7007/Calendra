@@ -17,6 +17,7 @@ function ListItem({
   score,
   id,
   onInvisible,
+  onAdd,
   selected = false,
   ignored = false,
 }) {
@@ -55,7 +56,8 @@ function ListItem({
       content: notificationContent,
       trigger: dateTime,
     });
-    onInvisible("add");
+    onInvisible();
+    onAdd();
     // setVisible(false);
   }
 
@@ -66,7 +68,8 @@ function ListItem({
         ignoredEvents: firebase.firestore.FieldValue.arrayUnion(id),
       })
       .catch((error) => alert(error));
-    onInvisible("ignore");
+    onInvisible();
+    onAdd();
   }
 
   if (true) {
