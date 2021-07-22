@@ -7,6 +7,7 @@ import SettingScreen from "../screens/SettingScreen";
 import SearchScreen from "../screens/SearchScreen";
 import CreateGroupScreen from "../screens/CreateGroupScreen";
 import SelectedScreen from "../screens/SelectedScreen";
+import GroupScreen from "../screens/GroupScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
 
 const Stack = createStackNavigator();
@@ -36,6 +37,11 @@ const AccountNavigator = () => (
     <Stack.Screen
       name="Setting"
       component={SettingScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Group Screen"
+      component={GroupScreen}
       options={{ headerShown: false }}
     />
     <Stack.Screen

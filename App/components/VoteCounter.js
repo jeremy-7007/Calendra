@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { firebase } from "../../firebase/config";
+import AuthContext from "../auth/context";
 
 import colors from "../config/colors";
 import IconButton from "./IconButton";
