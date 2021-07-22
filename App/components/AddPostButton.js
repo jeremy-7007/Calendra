@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
-    margin: 10,
   },
 });
 

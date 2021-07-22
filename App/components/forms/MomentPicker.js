@@ -18,6 +18,7 @@ function MomentPicker({ name, dateTime, mode, onChange, width }) {
 
   const updateValues = (event, selectedDate) => {
     const currentDate = selectedDate || dateTime;
+    currentDate.setSeconds(0);
     setShow(false);
     setFieldValue(name, currentDate);
     onChange(currentDate);

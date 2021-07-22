@@ -4,9 +4,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import colors from "../../config/colors";
 
-function IgnoreButton({ onPress }) {
+function IgnoreButton({ onPress, style }) {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.container}>
+    <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
       <MaterialCommunityIcons
         name="trash-can"
         color={colors.primary}

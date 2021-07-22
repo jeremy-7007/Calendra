@@ -1,5 +1,11 @@
 import React, { useState, useCallback, useContext } from "react";
-import { StyleSheet, FlatList, RefreshControl, View } from "react-native";
+import {
+  StyleSheet,
+  FlatList,
+  RefreshControl,
+  View,
+  Image,
+} from "react-native";
 import { firebase } from "../../firebase/config";
 import { useFocusEffect } from "@react-navigation/native";
 import Picker from "../components/AppPicker";
@@ -15,6 +21,9 @@ import AuthContext from "../auth/context";
 function PostsScreen({ navigation }) {
   const [events, setEvents] = useState([]);
   const [selectedEvents, setSelectedEvents] = useState([]);
+  const [ignoredEvents, setIgnoredEvents] = useState([]);
+  const [upvotedEvents, setUpvotedEvents] = useState([]);
+  const [downvotedEvents, setDownvotedEvents] = useState([]);
   const [group, setGroup] = useState("");
   const [groupList, setGroupList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -24,84 +33,99 @@ function PostsScreen({ navigation }) {
   const groupsRef = firebase.firestore().collection("groups");
   const userRef = firebase.firestore().collection("users").doc(user.id);
 
-  const refreshEvents = () => {
+  const refreshEvents = (groupName) => {
     setRefreshing(true);
-    eventsRef
-      .orderBy("score")
-      .get()
-      .then((snapshot) => {
-        const newEvents = [];
-        snapshot.docs.forEach((doc) => {
-          const event = doc.data();
-          newEvents.push(event);
-        });
-        setEvents(newEvents.reverse());
-      })
-      .catch((error) => alert(error));
 
-    // groupsRef
-    //   .doc(groupName)
-    //   .get()
-    //   .then((groupDoc) => {
-    //     const groupEventIds = groupDoc.data().events;
-    //     const displayEventIds = filterArray(groupEventIds, selectedEvents);
-    //     const newEvents = [];
-    //     displayEventIds.forEach((eventId) => {
-    //       eventsRef
-    //         .doc(eventId)
-    //         .get()
-    //         .then((doc) => {
-    //           const event = doc.data();
-    //           newEvents.push(event);
-    //         })
-    //         .catch((error) => alert(error));
-    //     });
-    //     newEvents.sort(compareEvents);
-    //     console.log(newEvents);
-    //     setEvents(newEvents);
-    //   })
-    //   .catch((error) => alert(error));
+    if (groupName !== "") {
+      groupsRef
+        .doc(groupName)
+        .get()
+        .then(async (groupDoc) => {
+          const groupEvents = [];
+          const data = groupDoc.data();
+          const listOfEvents = await data.events;
+          if (listOfEvents == []) return;
+          const shownEvents = await tripleFilter(
+            listOfEvents,
+            selectedEvents,
+            ignoredEvents
+          );
+          if (shownEvents == []) return;
+          await Promise.all(
+            shownEvents.map(async (eventId) => {
+              await eventsRef
+                .doc(eventId)
+                .get()
+                .then(async (doc) => {
+                  const event = await doc.data();
+                  event.vote = checkVote(event.id);
+                  groupEvents.push(event);
+                });
+            })
+          );
+          groupEvents.sort(compareEvents);
+          setEvents(groupEvents);
+        })
+        .catch((error) => alert(error));
+    }
+
     setRefreshing(false);
   };
+
   const fetchUserData = () => {
     userRef
       .get()
-      .then((userDoc) => {
-        const data = userDoc.data();
-        const newGroups = data.group;
-        const newSelectedEvents = data.selectedEvents;
+      .then(async (userDoc) => {
+        const data = await userDoc.data();
+        const newGroups = await data.groups;
+        const newSelectedEvents = await data.selectedEvents;
+        const newIgnoredEvents = await data.ignoredEvents;
+        const newUpvotedEvents = await data.upvotedEvents;
+        const newDownvotedEvents = await data.downvotedEvents;
         setGroupList(newGroups);
         setSelectedEvents(newSelectedEvents);
+        setIgnoredEvents(newIgnoredEvents);
+        setUpvotedEvents(newUpvotedEvents);
+        setDownvotedEvents(newDownvotedEvents);
       })
       .catch((error) => alert(error));
   };
 
-  const filterArray = (inArray, notInArray) => {
+  const tripleFilter = (inArray, notInArray1, notInArray2) => {
     const condition = (item) => {
-      return !notInArray.includes(item);
+      return !notInArray1.includes(item) && !notInArray2.includes(item);
     };
     const result = inArray.filter(condition);
     return result;
   };
   const compareEvents = (a, b) => {
-    if (a.score > b.score) {
-      return -1;
-    } else if (a.score < b.score) {
-      return 1;
-    } else {
-      return 0;
-    }
+    return b.score - a.score;
+  };
+
+  const checkVote = (id) => {
+    if (upvotedEvents.includes(id)) return 1;
+    else if (downvotedEvents.includes(id)) return -1;
+    else return 0;
   };
 
   const onPickerChange = (itemValue) => {
     setGroup(itemValue);
-    refreshEvents();
+    refreshEvents(itemValue);
+  };
+
+  const onAddPost = () => {
+    if (group === "") alert("Please select a group");
+    else navigation.navigate(routes.ADD_POST, { group });
+  };
+
+  const onInvisible = (id) => {
+    setEvents(events.filter((event) => event.id !== id));
   };
 
   useFocusEffect(
     useCallback(() => {
       fetchUserData();
-      refreshEvents();
+      refreshEvents(group);
     }, [])
   );
 
@@ -112,10 +136,10 @@ function PostsScreen({ navigation }) {
           value={group}
           onValueChange={onPickerChange}
           optionList={groupList}
+          containerStyle={{ width: "83%" }}
+          mode="dropdown"
         />
-        <AddPostButton
-          onPress={() => navigation.navigate(routes.ADD_POST, { group })}
-        />
+        <AddPostButton onPress={onAddPost} />
       </View>
       <FlatList
         data={events}
@@ -124,7 +148,7 @@ function PostsScreen({ navigation }) {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() => refreshEvents()}
+            onRefresh={() => refreshEvents(group)}
             colors={[colors.primary]}
           />
         }
@@ -134,6 +158,8 @@ function PostsScreen({ navigation }) {
             dateTime={item.dateTime.toDate()}
             score={item.score}
             id={item.id}
+            onInvisible={() => onInvisible(item.id)}
+            voteState={item.vote}
           />
         )}
       />
@@ -151,6 +177,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 20,
     alignItems: "center",
+    justifyContent: "space-between",
   },
 });
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -10,7 +10,7 @@ import * as ImagePicker from "expo-image-picker";
 
 import colors from "../config/colors";
 
-function ProfileImage({ imageUri, onChangeImage, icon }) {
+function ProfileImage({ imageUri, onChangeImage, onPress, icon }) {
   const requestPermission = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!granted) alert("Please enable permission to access the library");
@@ -26,14 +26,16 @@ function ProfileImage({ imageUri, onChangeImage, icon }) {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         quality: 0.5,
       });
-      if (!result.cancelled) onChangeImage(result.uri);
+      if (!result.cancelled) {
+        onChangeImage(result.uri);
+      }
     } catch (error) {
       console.log("Error reading image", error);
     }
   };
 
   return (
-    <TouchableWithoutFeedback onPress={selectImage}>
+    <TouchableWithoutFeedback onPress={onPress ? onPress : selectImage}>
       <View style={styles.container}>
         {!imageUri && (
           <MaterialCommunityIcons
@@ -59,7 +61,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
     alignSelf: "center",
-    margin: 40,
+    margin: 30,
   },
   image: {
     width: "100%",

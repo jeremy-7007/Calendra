@@ -21,25 +21,27 @@ function CalendarScreen(props) {
   function fetchEvents() {
     userRef
       .get()
-      .then((userDoc) => {
-        const newIds = userDoc.data().selectedEvents;
+      .then(async (userDoc) => {
+        const newIds = await userDoc.data().selectedEvents;
+        if (newIds === []) return;
         const newItem = {};
-        newIds.forEach((eventId) => {
-          eventsRef
-            .doc(eventId)
-            .get()
-            .then((doc) => {
-              const event = doc.data();
-              console.log(event.dateTime);
-              const dateField = dateFormat(event.dateTime.toDate());
-              if (!newItem.hasOwnProperty(dateField)) {
-                newItem[dateField] = [event];
-              } else {
-                newItem[dateField].push(event);
-              }
-            })
-            .catch((error) => alert(error));
-        });
+        await Promise.all(
+          newIds.map(async (eventId) => {
+            await eventsRef
+              .doc(eventId)
+              .get()
+              .then(async (doc) => {
+                const event = await doc.data();
+                const dateField = dateFormat(event.dateTime.toDate());
+                if (!newItem.hasOwnProperty(dateField)) {
+                  newItem[dateField] = [event];
+                } else {
+                  newItem[dateField].push(event);
+                }
+              })
+              .catch((error) => alert(error));
+          })
+        );
         setItems(newItem);
       })
       .catch((error) => alert(error));

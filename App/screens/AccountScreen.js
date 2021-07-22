@@ -12,40 +12,37 @@ import routes from "../navigation/routes";
 function AccountScreen({ navigation }) {
   const { user, setUser } = useContext(AuthContext);
 
-  const changeImage = (newImage) => {
-    const uid = user.id;
-    const usersRef = firebase.firestore().collection("users");
-    usersRef
-      .doc(uid)
-      .update("profileImage", newImage)
-      .catch((error) => alert(error));
-    usersRef
-      .doc(uid)
-      .get()
-      .then((firestoreDocument) => {
-        const user = firestoreDocument.data();
-        setUser(user);
-      })
-      .catch((error) => alert(error));
-  };
-
   return (
     <Screen style={styles.container}>
       <ProfileImage
         imageUri={user.profileImage}
-        onChangeImage={changeImage}
+        onPress={() => {}}
         icon="account"
       />
       <Text style={styles.displayName}>{user.displayName}</Text>
-      <Button title="My Groups" onPress={() => navigation.navigate(routes.MYGROUPS)} />
-      <Button title="Search" onPress={() => navigation.navigate(routes.SEARCH)} />
-      <Button title="Settings" onPress={() => navigation.navigate(routes.SETTING)}/>
-      <Button title="Logout" onPress={
-        () => {
+      <Button
+        title="My Groups"
+        onPress={() => navigation.navigate(routes.MYGROUPS)}
+      />
+      <Button
+        title="New Group"
+        onPress={() => navigation.navigate(routes.CREATEGROUP)}
+      />
+      <Button
+        title="Search Groups"
+        onPress={() => navigation.navigate(routes.SEARCH)}
+      />
+      <Button
+        title="Settings"
+        onPress={() => navigation.navigate(routes.SETTING)}
+      />
+      <Button
+        title="Logout"
+        onPress={() => {
           setUser(null);
           firebase.auth().signOut();
-        }
-      } />
+        }}
+      />
     </Screen>
   );
 }
@@ -58,7 +55,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     fontSize: 30,
     fontWeight: "bold",
-    marginBottom: 30,
+    marginBottom: 10,
   },
 });
 

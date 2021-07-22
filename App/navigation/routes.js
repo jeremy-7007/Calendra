@@ -2,6 +2,7 @@ export default Object.freeze({
   ACCOUNT: "Account Screen",
   ACCOUNTNAV: "Account",
   CALENDAR: "Calendar",
+  CREATEGROUP: "New Group",
   LOGIN: "Login",
   MYGROUPS: "My Groups",
   REGISTER: "Register",
@@ -10,4 +11,6 @@ export default Object.freeze({
   WELCOME: "Welcome",
   ADD_POST: "AddPost",
   POSTS: "Posts",
+  SELECTED: "Selected",
+  EDIT_PROFILE: "Edit Profile",
 });

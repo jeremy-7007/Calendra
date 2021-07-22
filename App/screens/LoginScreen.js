@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { StyleSheet, Image } from "react-native";
+import React, { useContext, useState } from "react";
+import { StyleSheet, Image, Button } from "react-native";
 import * as Yup from "yup";
 import { firebase } from "../../firebase/config";
 
@@ -7,17 +7,20 @@ import AuthContext from "../auth/context";
 import Screen from "../components/Screen";
 import BackButton from "../components/BackButton";
 import { Form, FormField, SubmitButton } from "../components/forms";
+import ActivityIndicator from "../components/ActivityIndicator";
 import routes from "../navigation/routes";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
-  password: Yup.string().required().min(4).label("Password"),
+  password: Yup.string().required().min(6).label("Password"),
 });
 
 function LoginScreen({ navigation }) {
   const authContext = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
   const onLoginPress = ({ email, password }) => {
+    setLoading(true);
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
@@ -38,42 +41,42 @@ function LoginScreen({ navigation }) {
           .catch((error) => alert(error));
       })
       .catch((error) => alert(error));
+    setLoading(false);
   };
 
   return (
-    <Screen style={styles.container}>
-      <BackButton onPress={() => navigation.navigate(routes.WELCOME)} />
-      <Image
-        style={styles.logo}
-        source={require("../assets/calendar-icon.png")}
-      />
-
-      <Form
-        initialValues={{ email: "", password: "" }}
-        onSubmit={(values) => onLoginPress(values)}
-        validationSchema={validationSchema}
-      >
-        <FormField
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon="email"
-          keyboardType="email-address"
-          name="email"
-          placeholder="Email"
-          textContentType="emailAddress"
-        />
-        <FormField
-          autoCapitalize="none"
-          autoCorrect={false}
-          icon="lock"
-          name="password"
-          placeholder="Password"
-          secureTextEntry
-          textContentType="password"
-        />
-        <SubmitButton title="Login" />
-      </Form>
-    </Screen>
+    <>
+      <ActivityIndicator visible={loading} />
+      <Screen style={styles.container}>
+        <BackButton onPress={() => navigation.navigate(routes.WELCOME)} />
+        <Image style={styles.logo} source={require("../assets/Calendra.png")} />
+        <Form
+          initialValues={{ email: "", password: "" }}
+          onSubmit={(values) => onLoginPress(values)}
+          validationSchema={validationSchema}
+        >
+          <FormField
+            autoCapitalize="none"
+            autoCorrect={false}
+            icon="email"
+            keyboardType="email-address"
+            name="email"
+            placeholder="Email"
+            textContentType="emailAddress"
+          />
+          <FormField
+            autoCapitalize="none"
+            autoCorrect={false}
+            icon="lock"
+            name="password"
+            placeholder="Password"
+            secureTextEntry
+            textContentType="password"
+          />
+          <SubmitButton title="Login" />
+        </Form>
+      </Screen>
+    </>
   );
 }
 

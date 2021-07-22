@@ -19,42 +19,83 @@ const validationSchema = Yup.object().shape({
 function CreateGroupScreen({ navigation }) {
   const authContext = useContext(AuthContext);
 
+  const groupStorageRef = firebase.storage().ref().child("images/group");
+
   const onCreatePress = async ({ groupName, groupImage }) => {
     const groupRef = firebase.firestore().collection("groups").doc(groupName);
     const group = await groupRef.get();
 
     if (group.exists) {
-        alert("Group already exists");
-        return;
+      alert("Group already exists");
+      return;
     }
 
-    const data = {
+    const imageRef = groupStorageRef.child(groupName);
+    // If an image is provided, jump through hoops to set
+    // groupImage to a link to the storage
+    if (groupImage) {
+      const uploadUri =
+        Platform.OS === "ios" ? groupImage.replace("file://", "") : groupImage;
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+          console.log(e);
+          reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", uploadUri, true);
+        xhr.send(null);
+      });
+      await imageRef
+        .put(blob, { contentType: "image/jpeg" })
+        .then((snapshot) => {
+          console.log("Uploaded image!");
+          blob.close();
+        })
+        .then(() => {
+          imageRef
+            .getDownloadURL()
+            .then((url) => {
+              const data = {
+                id: groupName,
+                groupName,
+                groupImage: url,
+                events: [],
+              };
+              groupRef
+                .set(data)
+                .then(() => authContext.setGroup(data))
+                .catch((error) => alert(error));
+            })
+            .catch((error) => alert(error));
+        })
+        .catch((error) => alert(error));
+      // If an image is not provided, set groupImage as null
+    } else {
+      const data = {
         id: groupName,
         groupName,
-        groupImage: groupImage ? groupImage : null,
-        events: []
+        groupImage: null,
+        events: [],
       };
-
-    groupRef.set(data).then(() => authContext.setGroup(data)).catch((error) => alert(error));
+      groupRef
+        .set(data)
+        .then(() => authContext.setGroup(data))
+        .catch((error) => alert(error));
+    }
 
     const id = authContext.user.id;
-    const usersRef = firebase.firestore().collection("users").doc(id);
-    const addGroup = await usersRef.update({
-      groups: firebase.firestore.FieldValue.arrayUnion(groupName)
-    }).catch((error) => alert(error));
-
-    // usersRef
-    // .get()
-    // .then((firestoreDocument) => {
-    //   const user = firestoreDocument.data();
-    //   authContext.setUser(user);
-    // })
-    
-
-
+    const userRef = firebase.firestore().collection("users").doc(id);
+    const addGroup = await userRef
+      .update({
+        groups: firebase.firestore.FieldValue.arrayUnion(groupName),
+      })
+      .catch((error) => alert(error));
 
     navigation.navigate(routes.ACCOUNT);
-
   };
 
   return (

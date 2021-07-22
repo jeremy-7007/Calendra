@@ -11,7 +11,7 @@ import AddButton from "./AddButton";
 import IgnoreButton from "./IgnoreButton";
 import AuthContext from "../../auth/context";
 
-function ListItem({ title, dateTime, score, id }) {
+function ListItem({ title, dateTime, score, id, onInvisible, voteState }) {
   const [visible, setVisible] = useState(true);
   const { user } = useContext(AuthContext);
 
@@ -29,7 +29,17 @@ function ListItem({ title, dateTime, score, id }) {
       content: notificationContent,
       trigger: dateTime,
     });
-    setVisible(false);
+    onInvisible();
+    // setVisible(false);
+  }
+
+  function handleIgnore() {
+    userRef
+      .update({
+        ignoredEvents: firebase.firestore.FieldValue.arrayUnion(id),
+      })
+      .catch((error) => alert(error));
+    onInvisible();
   }
 
   if (visible) {
@@ -43,11 +53,11 @@ function ListItem({ title, dateTime, score, id }) {
           <Text style={styles.title} numberOfLines={3}>
             {title}
           </Text>
-          <VoteCounter originalScore={score} id={id} />
+          <VoteCounter originalScore={score} id={id} voteState={voteState} />
         </View>
         <View style={styles.buttonContainer}>
           <AddButton onPress={handleAdd} />
-          <IgnoreButton onPress={() => setVisible(false)} />
+          <IgnoreButton onPress={handleIgnore} />
         </View>
       </View>
     );

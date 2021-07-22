@@ -1,81 +1,90 @@
-import React, { useContext, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, FlatList, RefreshControl } from "react-native";
 
-import { Form, FormField } from "../components/forms";
-import BackButton from '../components/BackButton';
-import Screen from '../components/Screen';
-import routes from '../navigation/routes';
-import AuthContext from '../auth/context';
-import { firebase } from '../../firebase/config';
-import { SubmitButton } from "../components/forms";
-
-
+import BackButton from "../components/BackButton";
+import Screen from "../components/Screen";
+import routes from "../navigation/routes";
+import Text from "../components/Text";
+import TextInput from "../components/TextInput";
+import { firebase } from "../../firebase/config";
+import SearchListItem from "../components/lists/SearchListItem";
+import colors from "../config/colors";
 
 function SearchScreen({ navigation }) {
-    const authContext = useContext(AuthContext);
+  const [groups, setGroups] = useState([]);
+  const [displayed, setDisplayed] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-    const onSearchPress = async ({ groupName }) => {
-        const groupRef = firebase.firestore().collection("groups").doc(groupName);
-        const group = await groupRef.get();
-        
-        
-        if (!group.exists) {
-            alert("Group does not exist!");
-            return;
+  const groupsRef = firebase.firestore().collection("groups");
+
+  function fetchGroups() {
+    setRefreshing(true);
+
+    groupsRef
+      .orderBy("groupName")
+      .get()
+      .then((snapshot) => {
+        const newGroups = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          newGroups.push(data);
+        });
+        setGroups(newGroups);
+        setDisplayed(newGroups);
+      })
+      .catch((error) => alert(error));
+
+    setRefreshing(false);
+  }
+
+  function filterGroup(input, group) {
+    const search = input.toLowerCase().replace(/ /g, "_");
+    return group.groupName.toLowerCase().replace(/ /g, "_").startsWith(search);
+  }
+
+  function updateQuery(input) {
+    setDisplayed(groups.filter((group) => filterGroup(input, group)));
+  }
+
+  useEffect(fetchGroups, []);
+
+  return (
+    <Screen style={styles.container}>
+      <BackButton onPress={() => navigation.navigate(routes.ACCOUNT)} />
+      <Text style={styles.pageTitle}>Search Group</Text>
+      <TextInput
+        icon="magnify"
+        placeholder="Enter group name"
+        onChangeText={updateQuery}
+      />
+      <FlatList
+        data={displayed}
+        keyExtractor={(i) => i.id.toString()}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={fetchGroups}
+            colors={[colors.primary]}
+          />
         }
-
-        let data = {};
-        
-        await Promise.all(groupRef.get().then(async (doc) => {
-            const info = await doc.data();
-            // data.id = await info.id;
-            // data.groupName = await info.groupName;
-            // data.groupImage = await info.groupImage;
-            // //console.log(info.groupImage);
-            // data.events = await info.events;
-            // //console.log(info.events);
-            data = info;
-        }).catch((error) => alert(error)));
-        console.log(data);
-           
-        navigation.navigate(routes.ACCOUNT);
-
-    }
-
-
-    return (
-        <Screen style={styles.container}>
-            <KeyboardAwareScrollView>
-                <BackButton onPress={() => navigation.navigate(routes.ACCOUNT)} />
-                <View style={{paddingTop: 100}}>
-                    <Form
-                    initialValues={{
-                        groupName: "",
-                    }}
-                    onSubmit={(values) => onSearchPress(values)}
-                    //validationSchema={validationSchema}
-                    >
-                    <FormField
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        icon="account"
-                        name="groupName"
-                        placeholder="Group name"
-                    />
-                    <View style={{height: 50}}/>
-                    <SubmitButton title="Search Group" color="secondary" />
-                    </Form>
-                </View>
-            </KeyboardAwareScrollView>
+        renderItem={({ item }) => (
+          <SearchListItem imageUri={item.groupImage} name={item.groupName} />
+        )}
+      />
     </Screen>
-    );
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-      padding: 10,
-    },
-  });
+  container: {
+    padding: 10,
+  },
+  pageTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    alignSelf: "center",
+    margin: 30,
+  },
+});
 
 export default SearchScreen;
