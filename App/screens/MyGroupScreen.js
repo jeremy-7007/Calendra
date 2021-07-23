@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList, StyleSheet, RefreshControl } from "react-native";
 import { firebase } from "../../firebase/config";
 
 import BackButton from "../components/BackButton";
@@ -10,16 +10,19 @@ import ListItemSeparator from "../components/lists/ListItemSeparator";
 import GroupListItem from "../components/lists/GroupListItem";
 import AuthContext from "../auth/context";
 import colors from "../config/colors";
+import SearchListItem from "../components/lists/SearchListItem";
 
 function MyGroupScreen({ navigation }) {
   const { user } = useContext(AuthContext);
-  const [myGroups, setMyGroups] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [displayed, setDisplayed] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const userRef = firebase.firestore().collection("users").doc(user.id);
   const groupRef = firebase.firestore().collection("groups");
 
-  useEffect(() => {
-    let isMounted = 2;
+  function fetchGroups() {
+    setRefreshing(true);
 
     userRef
       .get()
@@ -39,29 +42,39 @@ function MyGroupScreen({ navigation }) {
               });
           })
         );
-
-        if (isMounted > 0) setMyGroups(holder);
+        setGroups(holder);
+        setDisplayed(holder);
       })
       .catch((error) => alert(error));
-    return () => {
-      isMounted = isMounted - 1;
-    };
-  }, []);
+
+    setRefreshing(false);
+  }
+
+  useEffect(fetchGroups, []);
 
   return (
     <Screen style={{ padding: 10, backgroundColor: colors.light }}>
       <BackButton onPress={() => navigation.navigate(routes.ACCOUNT)} />
       <Text style={styles.pageTitle}>My Groups</Text>
       <FlatList
-        style={styles.container}
-        data={myGroups}
+        // style={styles.container}
+        data={displayed}
         keyExtractor={(group) => group.id.toString()}
-        ItemSeparatorComponent={ListItemSeparator}
+        // ItemSeparatorComponent={ListItemSeparator}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={fetchGroups}
+            colors={[colors.primary]}
+          />
+        }
         renderItem={({ item }) => (
-          <GroupListItem
-            title={item.groupName}
-            image={item.groupImage}
-            onPress={() => navigation.navigate(routes.ACCOUNT)}
+          <SearchListItem
+            imageUri={item.groupImage}
+            name={item.groupName}
+            onPress={() =>
+              navigation.navigate(routes.GROUP, { group: item.groupName })
+            }
           />
         )}
       />

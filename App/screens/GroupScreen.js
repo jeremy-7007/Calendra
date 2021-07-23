@@ -197,7 +197,7 @@ function GroupScreen({ navigation, route }) {
 
       <Text style={styles.displayName}>{group}</Text>
 
-      <Button title={"Follow"} />
+      <Button title={"Follow"} onPress={() => {}} />
 
       <FlatList
         data={events}

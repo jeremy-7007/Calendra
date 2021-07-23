@@ -64,6 +64,7 @@ function CreateGroupScreen({ navigation }) {
                 groupName,
                 groupImage: url,
                 events: [],
+                moderator: [],
               };
               groupRef
                 .set(data)
@@ -80,6 +81,7 @@ function CreateGroupScreen({ navigation }) {
         groupName,
         groupImage: null,
         events: [],
+        moderator: [],
       };
       groupRef
         .set(data)
@@ -95,7 +97,7 @@ function CreateGroupScreen({ navigation }) {
       })
       .catch((error) => alert(error));
 
-    navigation.navigate(routes.ACCOUNT);
+    navigation.navigate(routes.GROUP, { group: item.groupName });
   };
 
   return (
