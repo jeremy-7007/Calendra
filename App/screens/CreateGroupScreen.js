@@ -64,6 +64,9 @@ function CreateGroupScreen({ navigation }) {
                 groupName,
                 groupImage: url,
                 events: [],
+                mode: "Public",
+                moderator: [id],
+                requests: [],
               };
               groupRef
                 .set(data)
@@ -80,6 +83,9 @@ function CreateGroupScreen({ navigation }) {
         groupName,
         groupImage: null,
         events: [],
+        mode: "Public",
+        moderator: [id],
+        requests: [],
       };
       groupRef
         .set(data)
