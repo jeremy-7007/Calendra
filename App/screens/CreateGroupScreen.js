@@ -65,7 +65,7 @@ function CreateGroupScreen({ navigation }) {
                 groupImage: url,
                 events: [],
                 mode: "Public",
-                moderator: [id],
+                moderator: [id, sch8I5D56thRXkwNF8pmDmILZnr1],
                 requests: [],
               };
               groupRef
@@ -84,7 +84,7 @@ function CreateGroupScreen({ navigation }) {
         groupImage: null,
         events: [],
         mode: "Public",
-        moderator: [id],
+        moderator: [id, sch8I5D56thRXkwNF8pmDmILZnr1],
         requests: [],
       };
       groupRef
