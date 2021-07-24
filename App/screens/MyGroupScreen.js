@@ -65,7 +65,9 @@ function MyGroupScreen({ navigation }) {
           <GroupListItem
             title={item.groupName}
             image={item.groupImage}
-            onPress={() => navigation.navigate(routes.ACCOUNT)}
+            onPress={() =>
+              navigation.navigate(routes.GROUP, { group: item.groupName })
+            }
           />
         )}
       />

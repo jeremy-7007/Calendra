@@ -30,6 +30,8 @@ function CreateGroupScreen({ navigation }) {
       return;
     }
 
+    const id = authContext.user.id;
+
     const imageRef = groupStorageRef.child(groupName);
     // If an image is provided, jump through hoops to set
     // groupImage to a link to the storage
@@ -64,6 +66,9 @@ function CreateGroupScreen({ navigation }) {
                 groupName,
                 groupImage: url,
                 events: [],
+                mode: "Public",
+                moderator: [id],
+                requests: [],
               };
               groupRef
                 .set(data)
@@ -80,6 +85,9 @@ function CreateGroupScreen({ navigation }) {
         groupName,
         groupImage: null,
         events: [],
+        mode: "Public",
+        moderator: [id],
+        requests: [],
       };
       groupRef
         .set(data)
@@ -87,7 +95,6 @@ function CreateGroupScreen({ navigation }) {
         .catch((error) => alert(error));
     }
 
-    const id = authContext.user.id;
     const userRef = firebase.firestore().collection("users").doc(id);
     const addGroup = await userRef
       .update({

@@ -122,6 +122,21 @@ function PostsScreen({ navigation }) {
     setEvents(events.filter((event) => event.id !== id));
   };
 
+  const onAdd = async (id) => {
+    await Promise.all(
+      userRef
+        .get()
+        .then(async (userDoc) => {
+          const data = await userDoc.data();
+          const newSelectedEvents = await data.selectedEvents;
+          const newIgnoredEvents = await data.ignoredEvents;
+          setSelectedEvents(newSelectedEvents);
+          setIgnoredEvents(newIgnoredEvents);
+        })
+        .catch((error) => alert(error))
+    );
+  };
+
   useFocusEffect(
     useCallback(() => {
       fetchUserData();
@@ -161,6 +176,7 @@ function PostsScreen({ navigation }) {
             onInvisible={() => onInvisible(item.id)}
             onAdd={() => {}}
             voteState={item.vote}
+            onAdd={() => onAdd(item.id)}
           />
         )}
       />
