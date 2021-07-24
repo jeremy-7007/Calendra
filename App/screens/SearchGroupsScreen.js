@@ -15,7 +15,7 @@ function SeparatorWhite() {
   return <ListItemSeparator color={colors.white} />;
 }
 
-function SearchScreen({ navigation }) {
+function SearchGroupsScreen({ navigation }) {
   const [groups, setGroups] = useState([]);
   const [displayed, setDisplayed] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -103,4 +103,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchScreen;
+export default SearchGroupsScreen;
