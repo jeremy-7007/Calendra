@@ -14,7 +14,7 @@ function MomentPicker({ name, dateTime, mode, onChange, width }) {
   const [show, setShow] = useState(false);
 
   const icon = mode === "date" ? "calendar-month" : "clock";
-  const textFormat = mode === "date" ? "DD MMMM YYYY" : "hh : mm";
+  const textFormat = mode === "date" ? "DD MMMM YYYY" : "HH : mm";
 
   const updateValues = (event, selectedDate) => {
     const currentDate = selectedDate || dateTime;

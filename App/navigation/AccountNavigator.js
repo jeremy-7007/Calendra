@@ -2,15 +2,10 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import AccountScreen from "../screens/AccountScreen";
-import MyGroupScreen from "../screens/MyGroupScreen";
-import SettingScreen from "../screens/SettingScreen";
-import SearchScreen from "../screens/SearchScreen";
-import CreateGroupScreen from "../screens/CreateGroupScreen";
-import SelectedScreen from "../screens/SelectedScreen";
-import GroupScreen from "../screens/GroupScreen";
-import EditProfileScreen from "../screens/EditProfileScreen";
 import ModeratorScreen from "../screens/ModeratorScreen";
 import RequestScreen from "../screens/RequestScreen";
+import SettingsNavigator from "./SettingsNavigator";
+import GroupsNavigator from "./GroupsNavigator";
 
 const Stack = createStackNavigator();
 
@@ -22,38 +17,13 @@ const AccountNavigator = () => (
       options={{ headerShown: false }}
     />
     <Stack.Screen
-      name="My Groups"
-      component={MyGroupScreen}
+      name="Groups Navigator"
+      component={GroupsNavigator}
       options={{ headerShown: false }}
     />
     <Stack.Screen
-      name="New Group"
-      component={CreateGroupScreen}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name="Search"
-      component={SearchScreen}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name="Setting"
-      component={SettingScreen}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name="Group Screen"
-      component={GroupScreen}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name="Selected"
-      component={SelectedScreen}
-      options={{ headerShown: false }}
-    />
-    <Stack.Screen
-      name="Edit Profile"
-      component={EditProfileScreen}
+      name="Settings Navigator"
+      component={SettingsNavigator}
       options={{ headerShown: false }}
     />
     <Stack.Screen

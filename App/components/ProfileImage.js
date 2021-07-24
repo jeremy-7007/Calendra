@@ -10,7 +10,13 @@ import * as ImagePicker from "expo-image-picker";
 
 import colors from "../config/colors";
 
-function ProfileImage({ imageUri, onChangeImage, onPress, icon }) {
+function ProfileImage({
+  imageUri,
+  onChangeImage,
+  onPress,
+  icon,
+  backgroundColor = colors.light,
+}) {
   const requestPermission = async () => {
     const { granted } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!granted) alert("Please enable permission to access the library");
@@ -36,7 +42,7 @@ function ProfileImage({ imageUri, onChangeImage, onPress, icon }) {
 
   return (
     <TouchableWithoutFeedback onPress={onPress ? onPress : selectImage}>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: backgroundColor }]}>
         {!imageUri && (
           <MaterialCommunityIcons
             name={icon}
@@ -56,7 +62,6 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 75,
-    backgroundColor: colors.light,
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",

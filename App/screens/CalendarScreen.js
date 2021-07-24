@@ -22,7 +22,9 @@ function CalendarScreen(props) {
     userRef
       .get()
       .then(async (userDoc) => {
-        const newIds = await userDoc.data().selectedEvents;
+        const data = await userDoc.data();
+        const newIds = await data.selectedEvents;
+        const memos = await data.memos;
         if (newIds === []) return;
         const newItem = {};
         await Promise.all(
@@ -32,6 +34,7 @@ function CalendarScreen(props) {
               .get()
               .then(async (doc) => {
                 const event = await doc.data();
+                event.memo = await memos[eventId];
                 const dateField = dateFormat(event.dateTime.toDate());
                 if (!newItem.hasOwnProperty(dateField)) {
                   newItem[dateField] = [event];
@@ -63,6 +66,8 @@ function CalendarScreen(props) {
               startTime={moment(item.dateTime.toDate()).format("hh : mm")}
               description={item.title}
               bookmarkColor={colors.primary}
+              id={item.id}
+              importedMemo={item.memo}
             />
           );
         }}

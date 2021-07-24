@@ -83,6 +83,8 @@ function RegisterScreen({ navigation }) {
                     ignoredEvents: [],
                     upvotedEvents: [],
                     downvotedEvents: [],
+                    notificationIds: {},
+                    memos: {},
                   };
                   usersRef
                     .doc(uid)
@@ -105,6 +107,8 @@ function RegisterScreen({ navigation }) {
             ignoredEvents: [],
             upvotedEvents: [],
             downvotedEvents: [],
+            notificationIds: {},
+            memos: {},
           };
           usersRef
             .doc(uid)
