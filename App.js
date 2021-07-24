@@ -8,40 +8,37 @@ import * as Notifications from "expo-notifications";
 import navigationTheme from "./App/navigation/navigationTheme";
 import AppNavigator from "./App/navigation/AppNavigator";
 import AuthNavigator from "./App/navigation/AuthNavigator";
+import ActivityIndicator from "./App/components/ActivityIndicator";
 
 export default function App() {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [group, setGroup] = useState(null);
 
-
   useEffect(() => {
-    const usersRef = firebase.firestore().collection('users');
-    firebase.auth().onAuthStateChanged(user => {
+    const usersRef = firebase.firestore().collection("users");
+    firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         usersRef
           .doc(user.uid)
           .get()
           .then((document) => {
-            const userData = document.data()
-            setLoading(false)
-            setUser(userData)
+            const userData = document.data();
+            setLoading(false);
+            setUser(userData);
           })
           .catch((error) => {
-            setLoading(false)
+            setLoading(false);
           });
       } else {
-        setLoading(false)
+        setLoading(false);
       }
     });
   }, []);
 
-  if (loading) {	
-    return (	
-      <></>	
-    )	
+  if (loading) {
+    return <ActivityIndicator visible={true} />;
   }
-
 
   Notifications.setNotificationHandler({
     handleNotification: async () => ({

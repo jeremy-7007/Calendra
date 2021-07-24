@@ -100,8 +100,8 @@ function CreateGroupScreen({ navigation }) {
 
   return (
     <Screen style={styles.container}>
+      <BackButton onPress={() => navigation.navigate(routes.GROUPOPTIONS)} />
       <KeyboardAwareScrollView>
-        <BackButton onPress={() => navigation.navigate(routes.ACCOUNT)} />
         <Form
           initialValues={{
             groupName: "",

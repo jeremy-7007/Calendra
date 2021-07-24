@@ -45,55 +45,65 @@ function ListItem({
   //   return result;
   // }
 
-  function handleAdd() {
-    userRef
-      .update({
-        selectedEvents: firebase.firestore.FieldValue.arrayUnion(id),
-        ignoredEvents: firebase.firestore.FieldValue.arrayRemove(id),
-      })
-      .catch((error) => alert(error));
-    Notifications.scheduleNotificationAsync({
+  async function handleAdd() {
+    const identifier = await Notifications.scheduleNotificationAsync({
       content: notificationContent,
       trigger: dateTime,
     });
+    var userUpdate = {
+      selectedEvents: firebase.firestore.FieldValue.arrayUnion(id),
+      ignoredEvents: firebase.firestore.FieldValue.arrayRemove(id),
+    };
+    userUpdate[`notificationIds.${id}`] = [identifier, "At event time"];
+    userRef.update(userUpdate).catch((error) => alert(error));
     onInvisible();
     onAdd();
-    // setVisible(false);
   }
 
-  function handleIgnore() {
+  async function handleIgnore() {
     userRef
-      .update({
-        selectedEvents: firebase.firestore.FieldValue.arrayRemove(id),
-        ignoredEvents: firebase.firestore.FieldValue.arrayUnion(id),
+      .get()
+      .then(async (doc) => {
+        const notif = await doc.data().notificationIds;
+        const eventNotif = await notif[id];
+        const identifier = (await eventNotif) ? eventNotif[0] : null;
+        if (identifier) {
+          await Notifications.cancelScheduledNotificationAsync(identifier);
+        }
+      })
+      .then(() => {
+        var userUpdate = {
+          selectedEvents: firebase.firestore.FieldValue.arrayRemove(id),
+          ignoredEvents: firebase.firestore.FieldValue.arrayUnion(id),
+        };
+        userUpdate[`notificationIds.${id}`] =
+          firebase.firestore.FieldValue.delete();
+        userUpdate[`memos.${id}`] = firebase.firestore.FieldValue.delete();
+        userRef.update(userUpdate).catch((error) => alert(error));
+        onInvisible();
+        onAdd();
       })
       .catch((error) => alert(error));
-    onInvisible();
-    onAdd();
   }
 
-  if (true) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.infoContainer}>
-          <Text style={styles.date}>
-            {moment(dateTime).format("DD MMMM YYYY")}
-          </Text>
-          <Text style={styles.time}>{moment(dateTime).format("hh : mm")}</Text>
-          <Text style={styles.title} numberOfLines={3}>
-            {title}
-          </Text>
-          <VoteCounter originalScore={score} id={id} voteState={voteState} />
-        </View>
-        <View style={styles.buttonContainer}>
-          {!selected && <AddButton onPress={handleAdd} />}
-          {!ignored && <IgnoreButton onPress={handleIgnore} />}
-        </View>
+  return (
+    <View style={styles.container}>
+      <View style={styles.infoContainer}>
+        <Text style={styles.date}>
+          {moment(dateTime).format("DD MMMM YYYY")}
+        </Text>
+        <Text style={styles.time}>{moment(dateTime).format("HH : mm")}</Text>
+        <Text style={styles.title} numberOfLines={3}>
+          {title}
+        </Text>
+        <VoteCounter originalScore={score} id={id} voteState={voteState} />
       </View>
-    );
-  } else {
-    return null;
-  }
+      <View style={styles.buttonContainer}>
+        {!selected && <AddButton onPress={handleAdd} />}
+        {!ignored && <IgnoreButton onPress={handleIgnore} />}
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

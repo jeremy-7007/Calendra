@@ -93,8 +93,8 @@ function EditProfileScreen({ navigation }) {
     <>
       <ActivityIndicator visible={loading} />
       <Screen style={styles.screen}>
+        <BackButton onPress={() => navigation.navigate(routes.SETTING)} />
         <KeyboardAwareScrollView>
-          <BackButton onPress={() => navigation.navigate(routes.SETTING)} />
           <Text style={styles.pageTitle}>Edit Profile</Text>
           <Form
             initialValues={{

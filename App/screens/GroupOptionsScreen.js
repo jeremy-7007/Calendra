@@ -7,22 +7,22 @@ import routes from "../navigation/routes";
 import Text from "../components/Text";
 import Button from "../components/Button";
 
-function SettingScreen({ navigation }) {
+function GroupOptionsScreen({ navigation }) {
   return (
     <Screen style={styles.screen}>
       <BackButton onPress={() => navigation.navigate(routes.ACCOUNT)} />
-      <Text style={styles.pageTitle}>Settings</Text>
+      <Text style={styles.pageTitle}>Group Options</Text>
       <Button
-        title="See selected events"
-        onPress={() => navigation.navigate(routes.SELECTED)}
+        title="My Groups"
+        onPress={() => navigation.navigate(routes.MYGROUPS)}
       />
       <Button
-        title="See ignored events"
-        onPress={() => navigation.navigate(routes.IGNORED)}
+        title="New Group"
+        onPress={() => navigation.navigate(routes.CREATEGROUP)}
       />
       <Button
-        title="Edit profile"
-        onPress={() => navigation.navigate(routes.EDITPROFILE)}
+        title="Search Groups"
+        onPress={() => navigation.navigate(routes.SEARCHGROUPS)}
       />
     </Screen>
   );
@@ -40,4 +40,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SettingScreen;
+export default GroupOptionsScreen;

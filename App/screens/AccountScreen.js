@@ -21,20 +21,12 @@ function AccountScreen({ navigation }) {
       />
       <Text style={styles.displayName}>{user.displayName}</Text>
       <Button
-        title="My Groups"
-        onPress={() => navigation.navigate(routes.MYGROUPS)}
-      />
-      <Button
-        title="New Group"
-        onPress={() => navigation.navigate(routes.CREATEGROUP)}
-      />
-      <Button
-        title="Search Groups"
-        onPress={() => navigation.navigate(routes.SEARCH)}
+        title="Group Options"
+        onPress={() => navigation.navigate(routes.GROUPSNAV)}
       />
       <Button
         title="Settings"
-        onPress={() => navigation.navigate(routes.SETTING)}
+        onPress={() => navigation.navigate(routes.SETTINGNAV)}
       />
       <Button
         title="Logout"

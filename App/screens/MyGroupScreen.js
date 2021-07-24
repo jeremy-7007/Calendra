@@ -11,6 +11,10 @@ import GroupListItem from "../components/lists/GroupListItem";
 import AuthContext from "../auth/context";
 import colors from "../config/colors";
 
+function SeparatorWhite() {
+  return <ListItemSeparator color={colors.white} />;
+}
+
 function MyGroupScreen({ navigation }) {
   const { user } = useContext(AuthContext);
   const [myGroups, setMyGroups] = useState([]);
@@ -49,14 +53,14 @@ function MyGroupScreen({ navigation }) {
   }, []);
 
   return (
-    <Screen style={{ padding: 10, backgroundColor: colors.light }}>
-      <BackButton onPress={() => navigation.navigate(routes.ACCOUNT)} />
+    <Screen style={{ padding: 10, backgroundColor: colors.white }}>
+      <BackButton onPress={() => navigation.navigate(routes.GROUPOPTIONS)} />
       <Text style={styles.pageTitle}>My Groups</Text>
       <FlatList
         style={styles.container}
         data={myGroups}
         keyExtractor={(group) => group.id.toString()}
-        ItemSeparatorComponent={ListItemSeparator}
+        ItemSeparatorComponent={SeparatorWhite}
         renderItem={({ item }) => (
           <GroupListItem
             title={item.groupName}
@@ -71,7 +75,7 @@ function MyGroupScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.light,
+    backgroundColor: colors.white,
   },
   box: {
     color: "blue",

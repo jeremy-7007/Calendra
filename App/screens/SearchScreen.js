@@ -9,6 +9,11 @@ import TextInput from "../components/TextInput";
 import { firebase } from "../../firebase/config";
 import SearchListItem from "../components/lists/SearchListItem";
 import colors from "../config/colors";
+import ListItemSeparator from "../components/lists/ListItemSeparator";
+
+function SeparatorWhite() {
+  return <ListItemSeparator color={colors.white} />;
+}
 
 function SearchScreen({ navigation }) {
   const [groups, setGroups] = useState([]);
@@ -50,7 +55,7 @@ function SearchScreen({ navigation }) {
 
   return (
     <Screen style={styles.container}>
-      <BackButton onPress={() => navigation.navigate(routes.ACCOUNT)} />
+      <BackButton onPress={() => navigation.navigate(routes.GROUPOPTIONS)} />
       <Text style={styles.pageTitle}>Search Group</Text>
       <TextInput
         icon="magnify"
@@ -58,8 +63,10 @@ function SearchScreen({ navigation }) {
         onChangeText={updateQuery}
       />
       <FlatList
+        style={styles.list}
         data={displayed}
         keyExtractor={(i) => i.id.toString()}
+        ItemSeparatorComponent={SeparatorWhite}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -90,6 +97,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     alignSelf: "center",
     margin: 30,
+  },
+  list: {
+    marginTop: 20,
   },
 });
 

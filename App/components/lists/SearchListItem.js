@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 10,
   },
   imageContainer: {
     width: 70,
@@ -49,6 +48,7 @@ const styles = StyleSheet.create({
   name: {
     width: 150,
   },
+  icon: {},
 });
 
 export default SearchListItem;
