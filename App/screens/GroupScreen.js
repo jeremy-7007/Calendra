@@ -17,12 +17,15 @@ import colors from "../config/colors";
 import routes from "../navigation/routes";
 import AuthContext from "../auth/context";
 import ProfileImage from "../components/ProfileImage";
+import FollowButton from "../components/lists/FollowButton";
 
 function GroupScreen({ navigation, route }) {
   const { group } = route.params;
   const [events, setEvents] = useState([]);
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [ignoredEvents, setIgnoredEvents] = useState([]);
+  const [status, setStatus] = useState(false);
+  const [statusAvailable, setStatusAvailable] = useState(false);
   const [groupList, setGroupList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useContext(AuthContext);
@@ -38,6 +41,11 @@ function GroupScreen({ navigation, route }) {
         const data = await userDoc.data();
         const newSelectedEvents = await data.selectedEvents;
         const newIgnoredEvents = await data.ignoredEvents;
+        const listOfGroups = await data.groups;
+        const isFollowing = listOfGroups.includes(group);
+        console.log(isFollowing);
+        setStatus(isFollowing);
+        setStatusAvailable(true);
         setSelectedEvents(newSelectedEvents);
         setIgnoredEvents(newIgnoredEvents);
       })
@@ -196,8 +204,9 @@ function GroupScreen({ navigation, route }) {
       </View>
 
       <Text style={styles.displayName}>{group}</Text>
-
-      <Button title={"Follow"} />
+      <View style={{ alignItem: "center", flexDirection: "column" }}>
+        {statusAvailable && <FollowButton title={group} status={status} />}
+      </View>
 
       <FlatList
         data={events}

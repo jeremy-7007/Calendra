@@ -5,9 +5,10 @@ import Text from "../Text";
 import AuthContext from "../../auth/context";
 import { firebase } from "../../../firebase/config";
 
-function FollowButton({ title }) {
+function FollowButton({ title, status, style }) {
   const { user } = useContext(AuthContext);
-  const [follow, setFollow] = useState(true);
+  const [follow, setFollow] = useState(status);
+  //console.log(follow);
 
   const usersRef = firebase.firestore().collection("users").doc(user.id);
 
@@ -33,6 +34,7 @@ function FollowButton({ title }) {
       style={[
         styles.button,
         { backgroundColor: follow ? colors.primary : colors.white },
+        style,
       ]}
       onPress={follow ? handleUnfollow : handleFollow}
     >
