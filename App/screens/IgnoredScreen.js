@@ -7,12 +7,13 @@ import Screen from "../components/Screen";
 import BackButton from "../components/BackButton";
 import routes from "../navigation/routes";
 import SelectedItem from "../components/lists/SelectedItem";
+import IgnoredItem from "../components/lists/IgnoredItem";
 import ListItemSeparator from "../components/lists/ListItemSeparator";
 import Text from "../components/Text";
 import colors from "../config/colors";
 import AuthContext from "../auth/context";
 
-function SelectedScreen({ navigation }) {
+function IgnoredScreen({ navigation }) {
   const [events, setEvents] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useContext(AuthContext);
@@ -23,30 +24,26 @@ function SelectedScreen({ navigation }) {
   function onRefresh() {
     setRefreshing(true);
 
-    const newSelected = [];
+    const newIgnored = [];
     userRef
       .get()
       .then(async (userDoc) => {
         const data = await userDoc.data();
-        const selectedIds = await data.selectedEvents;
-        const notif = await data.notificationIds;
-        const memos = await data.memos;
-        if (selectedIds !== []) {
+        const ignoredIds = await data.ignoredEvents;
+        if (ignoredIds !== []) {
           await Promise.all(
-            selectedIds.map(async (eventId) => {
+            ignoredIds.map(async (eventId) => {
               await eventsRef
                 .doc(eventId)
                 .get()
                 .then(async (eventDoc) => {
                   const event = await eventDoc.data();
-                  event.notif = await notif[eventId][1];
-                  event.memo = await memos[eventId];
-                  newSelected.push(event);
+                  newIgnored.push(event);
                 })
                 .catch((error) => alert(error));
             })
           );
-          setEvents(newSelected);
+          setEvents(newIgnored);
         }
       })
       .catch((error) => alert(error));
@@ -67,7 +64,7 @@ function SelectedScreen({ navigation }) {
   return (
     <Screen style={styles.container}>
       <BackButton onPress={() => navigation.navigate(routes.SETTING)} />
-      <Text style={styles.pageTitle}>Selected Events</Text>
+      <Text style={styles.pageTitle}>Ignored Events</Text>
       <FlatList
         data={events}
         keyExtractor={(event) => event.id.toString()}
@@ -80,13 +77,11 @@ function SelectedScreen({ navigation }) {
           />
         }
         renderItem={({ item }) => (
-          <SelectedItem
+          <IgnoredItem
             title={item.title}
             dateTime={item.dateTime.toDate()}
             id={item.id}
             deleteCall={() => onInvisible(item.id)}
-            importedMemo={item.memo}
-            importedNotif={item.notif}
           />
         )}
       />
@@ -104,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SelectedScreen;
+export default IgnoredScreen;

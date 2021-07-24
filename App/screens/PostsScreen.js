@@ -115,7 +115,7 @@ function PostsScreen({ navigation }) {
 
   const onAddPost = () => {
     if (group === "") alert("Please select a group");
-    else navigation.navigate(routes.ADD_POST, { group });
+    else navigation.navigate(routes.ADDPOST, { group });
   };
 
   const onInvisible = (id) => {
@@ -159,6 +159,7 @@ function PostsScreen({ navigation }) {
             score={item.score}
             id={item.id}
             onInvisible={() => onInvisible(item.id)}
+            onAdd={() => {}}
             voteState={item.vote}
           />
         )}
