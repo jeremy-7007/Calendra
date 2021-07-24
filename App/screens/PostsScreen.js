@@ -27,7 +27,7 @@ function PostsScreen({ navigation }) {
   const refreshEvents = () => {
     setRefreshing(true);
     eventsRef
-      .orderBy("score")
+      .orderBy("dateTime")
       .get()
       .then((snapshot) => {
         const newEvents = [];
@@ -35,7 +35,7 @@ function PostsScreen({ navigation }) {
           const event = doc.data();
           newEvents.push(event);
         });
-        setEvents(newEvents.reverse());
+        setEvents(newEvents);
       })
       .catch((error) => alert(error));
 
@@ -69,6 +69,7 @@ function PostsScreen({ navigation }) {
       .then((userDoc) => {
         const data = userDoc.data();
         const newGroups = data.group;
+        console.log(newGroups);
         const newSelectedEvents = data.selectedEvents;
         setGroupList(newGroups);
         setSelectedEvents(newSelectedEvents);

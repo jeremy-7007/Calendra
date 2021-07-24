@@ -26,7 +26,7 @@ function MyGroupScreen({ navigation }) {
         .get()
         .then(
             async (userDoc) => {
-                const listOfGroups = await userDoc.data().groups;
+                const listOfGroups = await userDoc.data().group;
                 if (listOfGroups == null) return;
                 const holder = [];
                 await Promise.all(listOfGroups.map(async (groupId) => {

@@ -40,7 +40,7 @@ function CreateGroupScreen({ navigation }) {
     const id = authContext.user.id;
     const usersRef = firebase.firestore().collection("users").doc(id);
     const addGroup = await usersRef.update({
-      groups: firebase.firestore.FieldValue.arrayUnion(groupName)
+      group: firebase.firestore.FieldValue.arrayUnion(groupName)
     }).catch((error) => alert(error));
 
     // usersRef

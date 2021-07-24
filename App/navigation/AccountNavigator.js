@@ -23,7 +23,7 @@ const AccountNavigator = () => (
         />
         <Stack.Screen
         name="Search"
-        component={CreateGroupScreen}
+        component={SearchScreen}
         options={{ headerShown: false }}
         />
         <Stack.Screen
