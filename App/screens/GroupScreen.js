@@ -5,7 +5,7 @@ import {
   RefreshControl,
   View,
   Text,
-  Button,
+  TouchableOpacity,
 } from "react-native";
 import { firebase } from "../../firebase/config";
 import { useFocusEffect } from "@react-navigation/native";
@@ -24,8 +24,10 @@ function GroupScreen({ navigation, route }) {
   const [events, setEvents] = useState([]);
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [ignoredEvents, setIgnoredEvents] = useState([]);
-  const [status, setStatus] = useState(false);
+  const [moderator, setModerator] = useState(false);
+  const [status, setStatus] = useState("");
   const [statusAvailable, setStatusAvailable] = useState(false);
+  const [statusAvailable2, setStatusAvailable2] = useState(false);
   const [groupList, setGroupList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useContext(AuthContext);
@@ -43,8 +45,18 @@ function GroupScreen({ navigation, route }) {
         const newIgnoredEvents = await data.ignoredEvents;
         const listOfGroups = await data.groups;
         const isFollowing = listOfGroups.includes(group);
-        console.log(isFollowing);
-        setStatus(isFollowing);
+        groupRef
+          .doc(group)
+          .get()
+          .then((groupDoc) => {
+            if (groupDoc.data().requests.includes(user.id)) {
+              setStatus("Requesting");
+            } else if (isFollowing) {
+              setStatus("Following");
+            } else {
+              setStatus("Follow");
+            }
+          });
         setStatusAvailable(true);
         setSelectedEvents(newSelectedEvents);
         setIgnoredEvents(newIgnoredEvents);
@@ -63,6 +75,10 @@ function GroupScreen({ navigation, route }) {
           const data = groupDoc.data();
           // const newGroups = data.group;
           const listOfEvents = await data.events;
+          const listOfModerators = await data.moderator;
+          if (listOfModerators.includes(user.id)) {
+            setModerator(true);
+          }
           if (listOfEvents == []) return;
           await Promise.all(
             listOfEvents.map(async (eventId) => {
@@ -89,6 +105,7 @@ function GroupScreen({ navigation, route }) {
           // });
           //console.log(groupEvents);
           setEvents(groupEvents);
+          setStatusAvailable2(true);
         })
         .catch((error) => alert(error));
     }
@@ -204,8 +221,18 @@ function GroupScreen({ navigation, route }) {
       </View>
 
       <Text style={styles.displayName}>{group}</Text>
-      <View style={{ alignItem: "center", flexDirection: "column" }}>
-        {statusAvailable && <FollowButton title={group} status={status} />}
+      <View style={{ alignItem: "center", flexDirection: "row" }}>
+        {statusAvailable && status != "" && (
+          <FollowButton title={group} status={status} />
+        )}
+        {moderator && (
+          <TouchableOpacity
+            style={[styles.button, { backgroundColor: colors.secondary }]}
+            onPress={() => navigation.navigate(routes.MOD, { group: group })}
+          >
+            <Text style={{ color: colors.light }}>{"Moderator"}</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <FlatList
@@ -256,6 +283,13 @@ const styles = StyleSheet.create({
   // profileImage: {
   //   resizeMode: "center"
   // }
+  button: {
+    justifyContent: "center",
+    alignItems: "center",
+    height: 40,
+    width: 100,
+    borderRadius: 20,
+  },
 });
 
 export default GroupScreen;

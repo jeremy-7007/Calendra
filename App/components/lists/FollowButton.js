@@ -11,58 +11,64 @@ function FollowButton({ title, status, style }) {
   //console.log(follow);
 
   const usersRef = firebase.firestore().collection("users").doc(user.id);
+  const groupRef = firebase.firestore().collection("groups").doc(title);
 
   const handleFollow = async () => {
-    setFollow(true);
-    const addGroup = await usersRef
-      .update({
-        groups: firebase.firestore.FieldValue.arrayUnion(title),
-      })
-      .catch((error) => alert(error));
+    groupRef.get().then(async (groupDoc) => {
+      const privacySetting = groupDoc.data().mode;
+      if (privacySetting == "Public") {
+        setFollow("Following");
+        const addGroup = await usersRef
+          .update({
+            groups: firebase.firestore.FieldValue.arrayUnion(title),
+          })
+          .catch((error) => alert(error));
+      } else {
+        setFollow("Requested");
+        const requesting = await groupRef.update({
+          requests: firebase.firestore.FieldValue.arrayUnion(user.id),
+        });
+      }
+    });
   };
   const handleUnfollow = async () => {
-    setFollow(false);
+    setFollow("Follow");
     const removeGroup = await usersRef
       .update({
         groups: firebase.firestore.FieldValue.arrayRemove(title),
       })
       .catch((error) => alert(error));
+    const requesting = await groupRef.update({
+      requests: firebase.firestore.FieldValue.arrayRemove(user.id),
+    });
   };
 
   return (
     <TouchableOpacity
       style={[
         styles.button,
-        { backgroundColor: follow ? colors.primary : colors.white },
+        {
+          backgroundColor:
+            follow == "Following"
+              ? colors.primary
+              : follow == "Follow"
+              ? colors.white
+              : colors.secondary,
+        },
         style,
       ]}
-      onPress={follow ? handleUnfollow : handleFollow}
+      onPress={follow == "Follow" ? handleFollow : handleUnfollow}
     >
-      <Text style={{ color: follow ? colors.light : colors.medium }}>
-        {follow ? "Following" : "Follow"}
+      <Text
+        style={{ color: follow != "Follow" ? colors.light : colors.medium }}
+      >
+        {follow}
       </Text>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
-  containter: {
-    flexDirection: "row",
-    flex: 1,
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  image: {
-    justifyContent: "flex-start",
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    marginRight: 10,
-    backgroundColor: "grey",
-  },
-  title: {
-    width: 150,
-  },
   button: {
     justifyContent: "center",
     alignItems: "center",

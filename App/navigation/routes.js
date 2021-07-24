@@ -14,4 +14,6 @@ export default Object.freeze({
   SELECTED: "Selected",
   GROUP: "Group Screen",
   EDIT_PROFILE: "Edit Profile",
+  MOD: "Moderator",
+  REQUEST: "Request",
 });

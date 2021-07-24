@@ -9,6 +9,8 @@ import CreateGroupScreen from "../screens/CreateGroupScreen";
 import SelectedScreen from "../screens/SelectedScreen";
 import GroupScreen from "../screens/GroupScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
+import ModeratorScreen from "../screens/ModeratorScreen";
+import RequestScreen from "../screens/RequestScreen";
 
 const Stack = createStackNavigator();
 
@@ -52,6 +54,16 @@ const AccountNavigator = () => (
     <Stack.Screen
       name="Edit Profile"
       component={EditProfileScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Moderator"
+      component={ModeratorScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Request"
+      component={RequestScreen}
       options={{ headerShown: false }}
     />
   </Stack.Navigator>
