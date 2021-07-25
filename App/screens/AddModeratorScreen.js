@@ -7,9 +7,9 @@ import routes from "../navigation/routes";
 import Text from "../components/Text";
 import TextInput from "../components/TextInput";
 import { firebase } from "../../firebase/config";
-import SearchListItem from "../components/lists/SearchListItem";
 import colors from "../config/colors";
 import ListItemSeparator from "../components/lists/ListItemSeparator";
+import MemberListItem from "../components/lists/MemberListItem";
 
 function SeparatorWhite() {
   return <ListItemSeparator color={colors.white} />;
@@ -35,31 +35,6 @@ function AddModeratorScreen({ navigation, route }) {
         const listOfModerators = groupData.moderator;
         //console.log(listOfMembers);
         const holder = [];
-
-        // const promise1 = new Promise(
-        //   listOfModerators.map(async (userId) => {
-        //     console.log(userId);
-        //     await userRef
-        //       .doc(userId)
-        //       .get()
-        //       .then(async (doc) => {
-        //         const user = await doc.data();
-        //         holder.push(user);
-        //       });
-        //   })
-        // );
-        // const promise2 = Promise.resolve(
-        //   listOfMembers.map(async (userId) => {
-        //     console.log(userId);
-        //     await userRef
-        //       .doc(userId)
-        //       .get()
-        //       .then(async (doc) => {
-        //         const user = await doc.data();
-        //         holder.push(user);
-        //       });
-        //   })
-        // );
         await Promise.all(
           listOfModerators.map(async (userId) => {
             //console.log(userId);
@@ -87,6 +62,7 @@ function AddModeratorScreen({ navigation, route }) {
         );
         //Promise.all([promise1, promise2]).then(console.log(holder));
         setMembers(holder);
+        setDisplayed(holder);
         //console.log(members);
       })
       .catch((error) => alert(error));
@@ -129,10 +105,12 @@ function AddModeratorScreen({ navigation, route }) {
           />
         }
         renderItem={({ item }) => (
-          <SearchListItem
+          <MemberListItem
             imageUri={item.profileImage}
-            name={item.displayName}
-            onPress={() => {}}
+            title={item.displayName}
+            userId={item.id}
+            groupId={group}
+            mod={true}
           />
         )}
       />
