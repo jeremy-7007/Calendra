@@ -69,7 +69,12 @@ function ModeratorScreen({ navigation, route }) {
         title="Requests"
         onPress={() => navigation.navigate(routes.REQUEST, { group: group })}
       />
-      <Button title="Add Moderators" onPress={() => {}} />
+      <Button
+        title="Add Moderators"
+        onPress={() => {
+          navigation.navigate(routes.ADDMOD, { group: group });
+        }}
+      />
       <Button title="Quit Moderating" onPress={QuitModerating} />
     </Screen>
   );
