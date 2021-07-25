@@ -18,6 +18,7 @@ function SelectedItem({
   deleteCall,
   importedMemo,
   importedNotif,
+  groupName,
 }) {
   const [value, setValue] = useState(importedNotif);
   const { user } = useContext(AuthContext);
@@ -104,6 +105,7 @@ function SelectedItem({
 
   return (
     <View style={styles.container}>
+      <CrossButton onPress={() => onDelete()} style={styles.delete} />
       <Text style={styles.date}>{moment(dateTime).format("DD MMMM YYYY")}</Text>
       <Text style={styles.time}>{moment(dateTime).format("HH : mm")}</Text>
       <Text style={styles.title} numberOfLines={3}>
@@ -124,7 +126,10 @@ function SelectedItem({
           mode="dropdown"
         />
       </View>
-      <CrossButton onPress={() => onDelete()} style={styles.delete} />
+      <View style={styles.groupLine}>
+        <Text>Group: </Text>
+        <Text style={styles.groupName}>{groupName}</Text>
+      </View>
     </View>
   );
 }
@@ -169,6 +174,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     right: 20,
+  },
+  groupLine: {
+    flexDirection: "row",
+    marginTop: 10,
+  },
+  groupName: {
+    fontStyle: "italic",
   },
 });
 

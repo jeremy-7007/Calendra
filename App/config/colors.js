@@ -10,4 +10,6 @@ export default {
   danger: "#ff5252",
   upvote: "lightgreen",
   downvote: "tomato",
+  grey: "#878787",
+  faint: "#e9e9e9",
 };
