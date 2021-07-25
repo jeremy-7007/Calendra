@@ -131,6 +131,10 @@ function GroupScreen({ navigation, route }) {
     }, [])
   );
 
+  const onInvisible = (id) => {
+    setEvents(events.filter((event) => event.id !== id));
+  };
+
   const onAdd = async (id) => {
     await Promise.all(
       userRef
@@ -200,11 +204,14 @@ function GroupScreen({ navigation, route }) {
             dateTime={item.dateTime.toDate()}
             score={item.score}
             id={item.id}
-            onInvisible={() => {}}
+            onInvisible={() => onInvisible(item.id)}
             onAdd={() => onAdd(item.id)}
             voteState={checkVote(item.id)}
             selected={selectedEvents.includes(item.id)}
             ignored={ignoredEvents.includes(item.id)}
+            moderator={moderator}
+            groupName={item.group}
+            inGroupScreen={true}
           />
         )}
       />

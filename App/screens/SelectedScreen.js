@@ -87,6 +87,7 @@ function SelectedScreen({ navigation }) {
             deleteCall={() => onInvisible(item.id)}
             importedMemo={item.memo}
             importedNotif={item.notif}
+            groupName={item.group}
           />
         )}
       />

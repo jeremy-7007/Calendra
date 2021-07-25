@@ -81,6 +81,7 @@ function IgnoredScreen({ navigation }) {
             title={item.title}
             dateTime={item.dateTime.toDate()}
             id={item.id}
+            groupName={item.group}
             deleteCall={() => onInvisible(item.id)}
           />
         )}
