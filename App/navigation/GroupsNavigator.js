@@ -6,6 +6,9 @@ import MyGroupScreen from "../screens/MyGroupScreen";
 import CreateGroupScreen from "../screens/CreateGroupScreen";
 import SearchGroupsScreen from "../screens/SearchGroupsScreen";
 import GroupScreen from "../screens/GroupScreen";
+import ModeratorScreen from "../screens/ModeratorScreen";
+import RequestScreen from "../screens/RequestScreen";
+import EditGroupScreen from "../screens/EditGroupScreen";
 
 const Stack = createStackNavigator();
 
@@ -34,6 +37,21 @@ const GroupsNavigator = () => (
     <Stack.Screen
       name="Group Screen"
       component={GroupScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Moderator"
+      component={ModeratorScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Request"
+      component={RequestScreen}
+      options={{ headerShown: false }}
+    />
+    <Stack.Screen
+      name="Edit Group"
+      component={EditGroupScreen}
       options={{ headerShown: false }}
     />
   </Stack.Navigator>

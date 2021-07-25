@@ -1,35 +1,35 @@
-import React, { useContext, useState } from "react";
-import { StyleSheet, Platform, View, Text } from "react-native";
-import * as Yup from "yup";
+import React, { useContext, useEffect, useState } from "react";
+import { StyleSheet, View, Text } from "react-native";
 import { firebase } from "../../firebase/config";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 
 import AuthContext from "../auth/context";
-import { Form, FormField, SubmitButton } from "../components/forms";
 import Screen from "../components/Screen";
-import ProfileImageField from "../components/forms/ProfileImageField";
-import BackButton from "../components/BackButton";
 import routes from "../navigation/routes";
-import ActivityIndicator from "../components/ActivityIndicator";
 import Button from "../components/Button";
 import Picker from "../components/AppPicker";
 import colors from "../config/colors";
+import BackButton from "../components/BackButton";
 
 function ModeratorScreen({ navigation, route }) {
   const { group } = route.params;
   const { user } = useContext(AuthContext);
   const [mode, setMode] = useState("");
-  // const [status, setStatus] = useState(false);
 
-  const groupRef = firebase.firestore().collection("groups").doc(group);
+  const groupRef = firebase
+    .firestore()
+    .collection("groups")
+    .doc(group.groupName);
   const userRef = firebase.firestore().collection("users").doc(user.id);
 
-  Promise.all(
-    groupRef.get().then((groupDoc) => {
-      const data = groupDoc.data();
-      setMode(data.mode);
-    })
-  );
+  function fetchMode() {
+    groupRef
+      .get()
+      .then((groupDoc) => {
+        const data = groupDoc.data();
+        setMode(data.mode);
+      })
+      .catch((error) => alert(error));
+  }
 
   function GroupSetting() {}
 
@@ -38,24 +38,30 @@ function ModeratorScreen({ navigation, route }) {
       .update({
         moderator: firebase.firestore.FieldValue.arrayRemove(user.id),
       })
-      .then(() => navigation.navigate(routes.GROUP, { group: group }))
+      .then(() => navigation.navigate(routes.GROUP, { group }))
       .catch((error) => alert(error));
   }
 
   const onPickerChange = (itemValue) => {
     setMode(itemValue);
-    groupRef.update({
-      mode: itemValue,
-    });
+    groupRef
+      .update({
+        mode: itemValue,
+      })
+      .catch((error) => alert(error));
   };
 
   const listOfModes = ["Public", "Private"];
 
+  useEffect(fetchMode, []);
+
   return (
     <Screen style={styles.container}>
-      {mode != "" && (
+      <BackButton onPress={() => navigation.goBack()} />
+      <Text style={styles.pageTitle}>New Post</Text>
+      {mode !== "" && (
         <View style={styles.headerBar}>
-          <Text style={colors.medium}>{"Privacy Mode"}</Text>
+          <Text style={styles.privacy}>{"Privacy Mode"}</Text>
           <Picker
             value={mode}
             onValueChange={onPickerChange}
@@ -67,7 +73,9 @@ function ModeratorScreen({ navigation, route }) {
       )}
       <Button
         title="Requests"
-        onPress={() => navigation.navigate(routes.REQUEST, { group: group })}
+        onPress={() =>
+          navigation.navigate(routes.REQUEST, { group: group.groupName })
+        }
       />
       <Button title="Add Moderators" onPress={() => {}} />
       <Button title="Quit Moderating" onPress={QuitModerating} />
@@ -78,7 +86,6 @@ function ModeratorScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    justifyContent: "flex-end",
     backgroundColor: colors.light,
   },
   headerBar: {
@@ -87,6 +94,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  privacy: {
+    fontSize: 20,
+  },
+  pageTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    alignSelf: "center",
+    margin: 30,
   },
 });
 

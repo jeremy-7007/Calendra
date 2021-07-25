@@ -120,7 +120,7 @@ function CreateGroupScreen({ navigation }) {
           <FormField
             autoCapitalize="none"
             autoCorrect={false}
-            icon="account"
+            icon="account-group"
             name="groupName"
             placeholder="Group name"
           />

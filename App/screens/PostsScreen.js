@@ -1,11 +1,5 @@
 import React, { useState, useCallback, useContext } from "react";
-import {
-  StyleSheet,
-  FlatList,
-  RefreshControl,
-  View,
-  Image,
-} from "react-native";
+import { StyleSheet, FlatList, RefreshControl, View } from "react-native";
 import { firebase } from "../../firebase/config";
 import { useFocusEffect } from "@react-navigation/native";
 import Picker from "../components/AppPicker";
@@ -58,7 +52,6 @@ function PostsScreen({ navigation }) {
                 .get()
                 .then(async (doc) => {
                   const event = await doc.data();
-                  event.vote = checkVote(event.id);
                   groupEvents.push(event);
                 });
             })
@@ -174,8 +167,7 @@ function PostsScreen({ navigation }) {
             score={item.score}
             id={item.id}
             onInvisible={() => onInvisible(item.id)}
-            onAdd={() => {}}
-            voteState={item.vote}
+            voteState={checkVote(item.id)}
             onAdd={() => onAdd(item.id)}
           />
         )}
