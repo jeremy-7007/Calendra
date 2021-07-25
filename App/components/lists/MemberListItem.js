@@ -79,7 +79,7 @@ function MemberListItem({ title, imageUri, userId, groupId, mod }) {
             </TouchableOpacity>
           </View>
         )}
-        {!kick && !add && (
+        {!kick && !add && !mod && (
           <View>
             <TouchableOpacity
               style={[styles.button, { backgroundColor: colors.primary }]}

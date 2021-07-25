@@ -86,7 +86,7 @@ function MemberScreen({ navigation, route }) {
       <BackButton
         onPress={() => navigation.navigate(routes.MOD, { group: group })}
       />
-      <Text style={styles.pageTitle}>Add Moderators</Text>
+      <Text style={styles.pageTitle}>Members</Text>
       <TextInput
         icon="magnify"
         placeholder="Enter member name"
