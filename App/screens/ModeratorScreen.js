@@ -58,7 +58,7 @@ function ModeratorScreen({ navigation, route }) {
   return (
     <Screen style={styles.container}>
       <BackButton onPress={() => navigation.goBack()} />
-      <Text style={styles.pageTitle}>New Post</Text>
+      <Text style={styles.pageTitle}>Moderator Options</Text>
       {mode !== "" && (
         <View style={styles.headerBar}>
           <Text style={styles.privacy}>{"Privacy Mode"}</Text>
@@ -73,20 +73,18 @@ function ModeratorScreen({ navigation, route }) {
       )}
       <Button
         title="Requests"
-        onPress={() =>
-          navigation.navigate(routes.REQUEST, { group: group.groupName })
-        }
+        onPress={() => navigation.navigate(routes.REQUEST, { group })}
       />
       <Button
         title="Add Moderators"
         onPress={() => {
-          navigation.navigate(routes.ADDMOD, { group: group });
+          navigation.navigate(routes.ADDMOD, { group });
         }}
       />
       <Button
         title="Members"
         onPress={() => {
-          navigation.navigate(routes.MEMBER, { group: group });
+          navigation.navigate(routes.MEMBER, { group });
         }}
       />
       <Button title="Quit Moderating" onPress={QuitModerating} />

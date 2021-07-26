@@ -21,7 +21,10 @@ function AddModeratorScreen({ navigation, route }) {
   const [displayed, setDisplayed] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  const groupsRef = firebase.firestore().collection("groups").doc(group);
+  const groupsRef = firebase
+    .firestore()
+    .collection("groups")
+    .doc(group.groupName);
   const userRef = firebase.firestore().collection("users");
 
   function fetchMembers() {
@@ -30,36 +33,40 @@ function AddModeratorScreen({ navigation, route }) {
     groupsRef
       .get()
       .then(async (groupDoc) => {
-        const groupData = groupDoc.data();
-        const listOfMembers = groupData.members;
-        const listOfModerators = groupData.moderator;
+        const groupData = await groupDoc.data();
+        const listOfMembers = await groupData.members;
+        const listOfModerators = await groupData.moderator;
         //console.log(listOfMembers);
         const holder = [];
-        await Promise.all(
-          listOfModerators.map(async (userId) => {
-            //console.log(userId);
-            await userRef
-              .doc(userId)
-              .get()
-              .then(async (doc) => {
-                const user = await doc.data();
-                holder.push(user);
-              });
-          })
-        );
-        await Promise.all(
-          listOfMembers.map(async (userId) => {
-            //console.log(userId);
-            await userRef
-              .doc(userId)
-              .get()
-              .then(async (doc) => {
-                const user = await doc.data();
-                //console.log("member pushed");
-                holder.push(user);
-              });
-          })
-        );
+        if (listOfModerators !== []) {
+          await Promise.all(
+            listOfModerators.map(async (userId) => {
+              //console.log(userId);
+              await userRef
+                .doc(userId)
+                .get()
+                .then(async (doc) => {
+                  const user = await doc.data();
+                  holder.push(user);
+                });
+            })
+          );
+        }
+        if (listOfMembers !== []) {
+          await Promise.all(
+            listOfMembers.map(async (userId) => {
+              //console.log(userId);
+              await userRef
+                .doc(userId)
+                .get()
+                .then(async (doc) => {
+                  const user = await doc.data();
+                  //console.log("member pushed");
+                  holder.push(user);
+                });
+            })
+          );
+        }
         //Promise.all([promise1, promise2]).then(console.log(holder));
         setMembers(holder);
         setDisplayed(holder);
@@ -83,9 +90,7 @@ function AddModeratorScreen({ navigation, route }) {
 
   return (
     <Screen style={styles.container}>
-      <BackButton
-        onPress={() => navigation.navigate(routes.MOD, { group: group })}
-      />
+      <BackButton onPress={() => navigation.navigate(routes.MOD, { group })} />
       <Text style={styles.pageTitle}>Add Moderators</Text>
       <TextInput
         icon="magnify"
@@ -109,7 +114,7 @@ function AddModeratorScreen({ navigation, route }) {
             imageUri={item.profileImage}
             title={item.displayName}
             userId={item.id}
-            groupId={group}
+            groupId={group.groupName}
             mod={true}
           />
         )}

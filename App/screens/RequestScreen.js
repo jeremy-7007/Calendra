@@ -19,7 +19,10 @@ function RequestScreen({ navigation, route }) {
   const [empty, setEmpty] = useState(false);
 
   const userRef = firebase.firestore().collection("users");
-  const groupRef = firebase.firestore().collection("groups").doc(group);
+  const groupRef = firebase
+    .firestore()
+    .collection("groups")
+    .doc(group.groupName);
 
   useEffect(() => {
     let isMounted = 2;
@@ -67,7 +70,7 @@ function RequestScreen({ navigation, route }) {
             title={item.displayName}
             image={item.profileImage}
             userId={item.id}
-            groupId={group}
+            groupId={group.groupName}
           />
         )}
       />

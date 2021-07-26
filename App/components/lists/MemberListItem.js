@@ -51,8 +51,8 @@ function MemberListItem({ title, imageUri, userId, groupId, mod }) {
   };
 
   return (
-    <TouchableHighlight style={styles.container} underlayColor={colors.primary}>
-      <View>
+    <TouchableHighlight>
+      <View style={styles.container}>
         <View style={styles.imageContainer}>
           {!imageUri && (
             <MaterialCommunityIcons
@@ -66,31 +66,33 @@ function MemberListItem({ title, imageUri, userId, groupId, mod }) {
             <Image source={{ uri: imageUri }} style={styles.image} />
           )}
         </View>
-        <Text numberOfLines={1} style={styles.name}>
-          {title}
-        </Text>
-        {!add && mod && (
-          <View>
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: colors.primary }]}
-              onPress={handleAddMod}
-            >
-              <Text style={{ color: colors.light }}>{"Add"}</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        {!kick && !add && !mod && (
-          <View>
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: colors.primary }]}
-              onPress={handleKick}
-            >
-              <Text style={{ color: colors.light }}>{"Kick"}</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        {kick && <Text style={{ color: colors.medium }}>Kicked</Text>}
-        {add && <Text style={{ color: colors.medium }}>Moderator</Text>}
+        <View style={styles.textSegment}>
+          <Text numberOfLines={1} style={styles.name}>
+            {title}
+          </Text>
+          {!add && mod && (
+            <View>
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: colors.primary }]}
+                onPress={handleAddMod}
+              >
+                <Text style={{ color: colors.light }}>{"Add"}</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {!kick && !add && !mod && (
+            <View>
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: colors.primary }]}
+                onPress={handleKick}
+              >
+                <Text style={{ color: colors.light }}>{"Kick"}</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {kick && <Text style={{ color: colors.medium }}>Kicked</Text>}
+          {add && <Text style={{ color: colors.medium }}>Moderator</Text>}
+        </View>
       </View>
     </TouchableHighlight>
   );
@@ -100,7 +102,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     flex: 1,
-    justifyContent: "space-between",
     alignItems: "center",
   },
   imageContainer: {
@@ -111,16 +112,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
-    marginRight: 25,
+    marginRight: 30,
   },
   image: {
     width: "100%",
     height: "100%",
   },
-  name: {
-    width: 150,
-  },
+  name: {},
   icon: {},
+  textSegment: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flex: 1,
+  },
   button: {
     justifyContent: "center",
     alignItems: "center",

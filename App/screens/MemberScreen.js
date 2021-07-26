@@ -21,7 +21,10 @@ function MemberScreen({ navigation, route }) {
   const [displayed, setDisplayed] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  const groupsRef = firebase.firestore().collection("groups").doc(group);
+  const groupsRef = firebase
+    .firestore()
+    .collection("groups")
+    .doc(group.groupName);
   const userRef = firebase.firestore().collection("users");
 
   function fetchMembers() {
@@ -83,9 +86,7 @@ function MemberScreen({ navigation, route }) {
 
   return (
     <Screen style={styles.container}>
-      <BackButton
-        onPress={() => navigation.navigate(routes.MOD, { group: group })}
-      />
+      <BackButton onPress={() => navigation.navigate(routes.MOD, { group })} />
       <Text style={styles.pageTitle}>Members</Text>
       <TextInput
         icon="magnify"
@@ -109,7 +110,7 @@ function MemberScreen({ navigation, route }) {
             imageUri={item.profileImage}
             title={item.displayName}
             userId={item.id}
-            groupId={group}
+            groupId={group.groupName}
             mod={false}
           />
         )}

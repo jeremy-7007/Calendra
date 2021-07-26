@@ -67,7 +67,7 @@ function GroupScreen({ navigation, route }) {
             }
             if (data.mode == "Public") setPrivacy(false);
           })
-          .catch((error) => alert(error));;
+          .catch((error) => alert(error));
         setFollow(isFollowing);
         setStatusAvailable(true);
         setSelectedEvents(newSelectedEvents);
@@ -225,7 +225,9 @@ function GroupScreen({ navigation, route }) {
       {privacy && !follow && (
         <Text
           style={{
+            fontSize: 25,
             color: colors.medium,
+            alignSelf: "center",
           }}
         >
           This group is private

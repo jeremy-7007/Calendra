@@ -6,10 +6,12 @@ import {
   TouchableHighlight,
   TouchableOpacity,
 } from "react-native";
+import { firebase } from "../../../firebase/config";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 import colors from "../../config/colors";
 import Text from "../Text";
 import AuthContext from "../../auth/context";
-import { firebase } from "../../../firebase/config";
 
 function UserListItem({ title, image, userId, groupId }) {
   const [accept, setAccept] = useState(false);
@@ -27,7 +29,7 @@ function UserListItem({ title, image, userId, groupId }) {
       .catch((error) => alert(error));
     const addToGroup = await groupRef
       .update({
-        members: firebase.firestore.FieldValue.arrayUnion(user.id),
+        members: firebase.firestore.FieldValue.arrayUnion(userId),
       })
       .catch((error) => alert(error));
     const resolveRequest = await groupRef
@@ -46,31 +48,43 @@ function UserListItem({ title, image, userId, groupId }) {
   };
 
   return (
-    <TouchableHighlight underlayColor={colors.primary}>
+    <TouchableHighlight>
       <View style={styles.containter}>
-        <Image style={styles.image} source={image} />
-        <Text numberOfLines={1} style={styles.title}>
-          {title}
-        </Text>
-        {!accept && !reject && (
-          <View>
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: colors.primary }]}
-              onPress={handleAccept}
-            >
-              <Text style={{ color: colors.light }}>{"Accept"}</Text>
-            </TouchableOpacity>
-            <View style={{ height: 10 }} />
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: colors.secondary }]}
-              onPress={handleReject}
-            >
-              <Text style={{ color: colors.light }}>{"Reject"}</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        {accept && <Text style={{ color: colors.medium }}>Accepted</Text>}
-        {reject && <Text style={{ color: colors.medium }}>Rejected</Text>}
+        <View style={styles.imageContainer}>
+          {!image && (
+            <MaterialCommunityIcons
+              name={"account-group"}
+              size={30}
+              color={colors.medium}
+              style={styles.icon}
+            />
+          )}
+          {image && <Image source={{ uri: image }} style={styles.image} />}
+        </View>
+        <View style={styles.textSegment}>
+          <Text numberOfLines={1} style={styles.title}>
+            {title}
+          </Text>
+          {!accept && !reject && (
+            <View>
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: colors.primary }]}
+                onPress={handleAccept}
+              >
+                <Text style={{ color: colors.light }}>{"Accept"}</Text>
+              </TouchableOpacity>
+              <View style={{ height: 10 }} />
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: colors.secondary }]}
+                onPress={handleReject}
+              >
+                <Text style={{ color: colors.light }}>{"Reject"}</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {accept && <Text style={{ color: colors.medium }}>Accepted</Text>}
+          {reject && <Text style={{ color: colors.medium }}>Rejected</Text>}
+        </View>
       </View>
     </TouchableHighlight>
   );
@@ -80,19 +94,30 @@ const styles = StyleSheet.create({
   containter: {
     flexDirection: "row",
     flex: 1,
-    justifyContent: "space-between",
     alignItems: "center",
   },
-  image: {
+  imageContainer: {
     justifyContent: "flex-start",
     width: 70,
     height: 70,
     borderRadius: 35,
-    marginRight: 10,
-    backgroundColor: "grey",
+    marginRight: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+    backgroundColor: colors.white,
   },
-  title: {
-    width: 150,
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  icon: {},
+  title: {},
+  textSegment: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flex: 1,
   },
   button: {
     justifyContent: "center",
