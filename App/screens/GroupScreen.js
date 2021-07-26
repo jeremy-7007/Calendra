@@ -27,7 +27,8 @@ function GroupScreen({ navigation, route }) {
   const [moderator, setModerator] = useState(false);
   const [status, setStatus] = useState("");
   const [statusAvailable, setStatusAvailable] = useState(false);
-  const [statusAvailable2, setStatusAvailable2] = useState(false);
+  const [follow, setFollow] = useState(false);
+  const [privacy, setPrivacy] = useState(true);
   const [groupList, setGroupList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useContext(AuthContext);
@@ -49,14 +50,17 @@ function GroupScreen({ navigation, route }) {
           .doc(group)
           .get()
           .then((groupDoc) => {
-            if (groupDoc.data().requests.includes(user.id)) {
+            const data = groupDoc.data();
+            if (data.requests.includes(user.id)) {
               setStatus("Requesting");
             } else if (isFollowing) {
               setStatus("Following");
             } else {
               setStatus("Follow");
             }
+            if (data.mode == "Public") setPrivacy(false);
           });
+        setFollow(isFollowing);
         setStatusAvailable(true);
         setSelectedEvents(newSelectedEvents);
         setIgnoredEvents(newIgnoredEvents);
@@ -105,7 +109,6 @@ function GroupScreen({ navigation, route }) {
           // });
           //console.log(groupEvents);
           setEvents(groupEvents);
-          setStatusAvailable2(true);
         })
         .catch((error) => alert(error));
     }
@@ -225,7 +228,7 @@ function GroupScreen({ navigation, route }) {
         {statusAvailable && status != "" && (
           <FollowButton title={group} status={status} />
         )}
-        {moderator && (
+        {moderator && statusAvailable && status != "" && (
           <TouchableOpacity
             style={[styles.button, { backgroundColor: colors.secondary }]}
             onPress={() => navigation.navigate(routes.MOD, { group: group })}
@@ -235,30 +238,42 @@ function GroupScreen({ navigation, route }) {
         )}
       </View>
 
-      <FlatList
-        data={events}
-        keyExtractor={(event) => event.id.toString()}
-        ItemSeparatorComponent={ListItemSeparator}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => refreshEvents(group)}
-            colors={[colors.primary]}
-          />
-        }
-        renderItem={({ item }) => (
-          <ListItem
-            title={item.title}
-            dateTime={item.dateTime.toDate()}
-            score={item.score}
-            id={item.id}
-            onInvisible={() => {}}
-            onAdd={() => onAdd(item.id)}
-            selected={selectedEvents.includes(item.id)}
-            ignored={ignoredEvents.includes(item.id)}
-          />
-        )}
-      />
+      {(!privacy || follow) && (
+        <FlatList
+          data={events}
+          keyExtractor={(event) => event.id.toString()}
+          ItemSeparatorComponent={ListItemSeparator}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => refreshEvents(group)}
+              colors={[colors.primary]}
+            />
+          }
+          renderItem={({ item }) => (
+            <ListItem
+              title={item.title}
+              dateTime={item.dateTime.toDate()}
+              score={item.score}
+              id={item.id}
+              onInvisible={() => {}}
+              onAdd={() => onAdd(item.id)}
+              selected={selectedEvents.includes(item.id)}
+              ignored={ignoredEvents.includes(item.id)}
+            />
+          )}
+        />
+      )}
+
+      {privacy && !follow && (
+        <Text
+          style={{
+            color: colors.medium,
+          }}
+        >
+          This group is private
+        </Text>
+      )}
     </Screen>
   );
 }

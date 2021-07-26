@@ -20,9 +20,14 @@ function UserListItem({ title, image, userId, groupId }) {
 
   const handleAccept = async () => {
     setAccept(true);
-    const addToGroup = await usersRef
+    const addGroup = await usersRef
       .update({
         groups: firebase.firestore.FieldValue.arrayUnion(groupId),
+      })
+      .catch((error) => alert(error));
+    const addToGroup = await groupRef
+      .update({
+        members: firebase.firestore.FieldValue.arrayUnion(user.id),
       })
       .catch((error) => alert(error));
     const resolveRequest = await groupRef

@@ -23,6 +23,11 @@ function FollowButton({ title, status, style }) {
             groups: firebase.firestore.FieldValue.arrayUnion(title),
           })
           .catch((error) => alert(error));
+        const addToGroup = await groupRef
+          .update({
+            members: firebase.firestore.FieldValue.arrayUnion(user.id),
+          })
+          .catch((error) => alert(error));
       } else {
         setFollow("Requested");
         const requesting = await groupRef.update({
@@ -41,6 +46,12 @@ function FollowButton({ title, status, style }) {
     const requesting = await groupRef.update({
       requests: firebase.firestore.FieldValue.arrayRemove(user.id),
     });
+    const removeFromGroup = await groupRef
+      .update({
+        members: firebase.firestore.FieldValue.arrayRemove(user.id),
+        moderator: firebase.firestore.FieldValue.arrayRemove(user.id),
+      })
+      .catch((error) => alert(error));
   };
 
   return (
