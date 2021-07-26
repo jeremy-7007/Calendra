@@ -35,7 +35,7 @@ and conveniently add them to their own calendars.
 
 Welcome Screen                             |  Login Screen                           |  Register Screen
 :-----------------------------------------:|:---------------------------------------:|:---------------------------------------------:
-<img src="../media/Welcome.PNG" alt="welcome" width="300"/>  |  <img src="../media/Login.PNG" alt="login" width="300"/>  |  <img src="../media/Register.PNG" alt="login" width="300"/>
+<img src="../media/Welcome_new.png" alt="welcome" width="300"/>  |  <img src="../media/Login_new.png" alt="login" width="300"/>  |  <img src="../media/Register.PNG" alt="login" width="300"/>
 
 
 * **Posts Screen:** Displays all the new events posted on the groups that the user joins. The user can then choose to add or ignore the events, to upvote or downvote the event for legitimacy. Users can see the new events of each group by selecting from the dropdown list of joined groups. Users can also post new events by selecting the group from the dropdown list and press the add button right next to it.
@@ -45,7 +45,7 @@ Welcome Screen                             |  Login Screen                      
 
 * **Add new Event Screen:** Users can add a new event with event name, date, and time. The group this event belongs to is the group indicated in the dropdown list from the previous screen.
 
-   <img src="../media/Create Event.png" alt="add_post" width="300"/>
+   <img src="../media/New_post_new.png" alt="add_post" width="300"/>
 
 
 * **Calendar Screen:** Shows all the events in a calendar.
@@ -55,9 +55,13 @@ Full Calendar                                            |  Displayed Events    
 <img src="../media/Calendar Month.png" alt="calendar_month" width="300"/>  |  <img src="../media/New Calendar.png" alt="calendar_event" width="300"/>  |  <img src="../media/Calendar Day no Event.png" alt="calendar_no_event" width="300"/>
 
 
-* **Group Screen:** Display all the events of the groups in chronological order. Highlights all the events that the user has already registered for. Has a following/follow button to follow/unfollow. If the user is the moderator of the group, there is a "Moderate" button to access moderator's options.
+* **Group Screen:** Display all the events of the groups in chronological order and by order of voting score. Highlights all the events that the user has already registered for. Has a following/follow button to follow/unfollow. If the user is the moderator of the group, there is a "Moderate" button to access moderator's options.
 
    <img src="../media/Group.png" alt="group" width="300"/>
+
+* **Edit Group Image Screen:** A simple screen to change the group image. Accessible only by group moderators by tapping on the gear icon in the top-right of the Group Screen
+
+   <img src="../media/Edit_group_image.png" alt="Edit_group_image" width="300"/>
 
 * **Moderator Screen:** Display the options for moderators of a group. Moderators can set the mode of the group from public to private(request to follow and see the events). Moderators can also add more moderators to the group, kick people from the group, accept requests to join the group, delete events, or quit their role.
 
@@ -105,13 +109,26 @@ Before                                                   |  After
    <img src="../media/Search2.PNG" alt="search_group" width="300"/>
 
 
-* **Setting Screen:**
+* **Setting Screen:** Includes options to edit user's profile, as well as to see all selected events and ignored events
 
-   *(Yet to implement)*
+   <img src="../media/Settings.png" alt="settings" width="300"/>
+
+* **Selected Events Screen:** Displays all selected events. Each event includes options to change reminder notification time, attach a personal memo, and deselect that event
+
+   <img src="../media/Selected_screen.png" alt="selected" width="300"/>
+
+* **Ignored Events Screen:** Displays all ignored events. Each event can be unignored.
+
+   <img src="../media/Ignored_screen.png" alt="ignored" width="300"/>
+
+* **Edit Profile Screen:** Has options to change the user's profile image as well as display name. These two fields are both optional (e.g. leaving the image field empty while choosing a new display name will only change the display name).
+
+   <img src="../media/Edit_profile.png" alt="edit_profile" width="300"/>
 
 2. Additional features:
    1. Group Privacy: Group can be private or public
-   2. Notification Settings
+   2. Notification Settings: Implemented in the Selected Events Screen. Has options to trigger the notification 1 week before, 1 day before, 1 hour before or at event time
+   3. Personal memo: Implemented in the Selected Events Screen. Allows user to save an event-specific personal memo that can be seen in the Calendar Screen only by the user
 
 ## Comparison with Existing Apps
 *Default Calendar app:* with *default Calendar apps*, we have to keep track of all events and deadlines and manually add them to the calendar ourselves 
@@ -159,12 +176,6 @@ _* Numbers only indicate scenario_
    * dateTime: timestamp
    * score: number
 
-## Development plan
-
-**1st week of July:** Peer review + Troubleshooting core features\
-**2nd week of July:** Addressing feedback + Add additional features\
-**3rd week of July:** Working app + Troubleshooting\
-**4th week of July:** Working on MS3
 
 ## Tech Stack
 * Firebase
@@ -178,4 +189,6 @@ We tested the app among our friends, and including ourselves, to see if the idea
 **Private group:** We created a small group with initially only one person as the sole member and moderator of the group. Other people request to join the group, and the moderator can accept and decline some requests(working). Non-followers cannot see the events of the group(working). The moderator then gives another member the moderator role, and can kick another member from the group(working). The moderator can also quit their moderator role in the moderate screen, or simply unfollow the group(working). (Corner case: If there is only one moderator left for the group, the moderator cannot quit their role or unfollow the group)
 
 **Public group:** Everyone can follow and unfollow as they like(except for the last moderator), and all the events are public.
+
+We also tested the app with slow internet connections. All functions still work as intended. However, offline support may be needed in the future.
 
