@@ -61,19 +61,21 @@ Full Calendar                                            |  Displayed Events    
 
 * **Moderator Screen:** Display the options for moderators of a group. Moderators can set the mode of the group from public to private(request to follow and see the events). Moderators can also add more moderators to the group, kick people from the group, accept requests to join the group, delete events, or quit their role.
 
-   *(To be added)*
+   <img src="../media/Moderator.PNG" alt="mod" width="300"/>
    
 * **Request Screen:** Moderators can accept or decline requests to follow the group.
 
-   *(To be added)*
+Before                                                   |  After                                        
+:-------------------------------------------------------:|:--------------------------------------------------------:
+<img src="../media/Request Before.PNG" alt="request_before" width="300"/>  |  <img src="../media/Request After.PNG" alt="request_after" width="300"/>  
    
 * **Add Moderator Screen:** Moderators can search from the list of group members to add new moderators for the group.
 
-   *(To be added)*
+   <img src="../media/Add Mod.PNG" alt="add_mod" width="300"/>
    
 * **Member Screen:** Show a list of all the members of the group. Moderators can kick people out of the group.
 
-   *(To be added)*
+   <img src="../media/Member.PNG" alt="member" width="300"/>
    
 * **Account Screen:** This screen contains the profile image of the user which can be changed by tapping on it and the following utilities: 
    * Group Options: Navigate to another screen with options related to groups.
@@ -90,7 +92,7 @@ Full Calendar                                            |  Displayed Events    
    
 * **My Group Screen:** Displays all the groups the user currently joins. Has a following/follow button to unfollow the group.
 
-   <img src="../media/Mi Group.png" alt="my_group" width="300"/>
+   <img src="../media/My Group.PNG" alt="my_group" width="300"/>
 
 
 * **Create Group Screen:** Includes a profile image and the name field.
@@ -98,7 +100,7 @@ Full Calendar                                            |  Displayed Events    
    <img src="../media/Create Group.PNG" alt="create_group" width="300"/>
 
 
-* **Search Group Screen:** Search for an existing group. Displays an error message if the group does not exist.
+* **Search Group Screen:** Search for an existing group.
 
    <img src="../media/Search2.PNG" alt="search_group" width="300"/>
 
