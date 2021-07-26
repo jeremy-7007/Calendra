@@ -142,8 +142,8 @@ malicious parties such as spammers or trolls (which are admittedly more common i
 ## Program Flow
 _* Numbers only indicate scenario_
 
-![Program_flow](../media/Updated User.PNG)
-![Program_flow2](../media/Updated Mod.PNG)
+<img src="../media/Updated User.PNG" alt="program_flow_1"/>
+<img src="../media/Updated Mod.PNG" alt="program_flow_2"/>
 
 ## Firebase
 
