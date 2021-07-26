@@ -22,4 +22,5 @@ export default Object.freeze({
   EDITPROFILE: "Edit Profile",
   ADDMOD: "Add Moderator",
   MEMBER: "Member",
+  EDITGROUP: "Edit Group",
 });

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useContext } from "react";
+import React, { useState, useCallback, useContext, useEffect } from "react";
 import {
   StyleSheet,
   FlatList,
@@ -6,9 +6,11 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { firebase } from "../../firebase/config";
 import { useFocusEffect } from "@react-navigation/native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import ListItem from "../components/lists/ListItem";
 import ListItemSeparator from "../components/lists/ListItemSeparator";
@@ -16,14 +18,17 @@ import Screen from "../components/Screen";
 import colors from "../config/colors";
 import routes from "../navigation/routes";
 import AuthContext from "../auth/context";
-import ProfileImage from "../components/ProfileImage";
 import FollowButton from "../components/lists/FollowButton";
+import BackButton from "../components/BackButton";
+import ConfigButton from "../components/ConfigButton";
 
 function GroupScreen({ navigation, route }) {
   const { group } = route.params;
   const [events, setEvents] = useState([]);
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [ignoredEvents, setIgnoredEvents] = useState([]);
+  const [upvotedEvents, setUpvotedEvents] = useState([]);
+  const [downvotedEvents, setDownvotedEvents] = useState([]);
   const [moderator, setModerator] = useState(false);
   const [status, setStatus] = useState("");
   const [statusAvailable, setStatusAvailable] = useState(false);
@@ -34,7 +39,7 @@ function GroupScreen({ navigation, route }) {
   const { user } = useContext(AuthContext);
 
   const eventsRef = firebase.firestore().collection("events");
-  const groupRef = firebase.firestore().collection("groups");
+  const groupsRef = firebase.firestore().collection("groups");
   const userRef = firebase.firestore().collection("users").doc(user.id);
 
   const fetchUserData = () => {
@@ -44,10 +49,12 @@ function GroupScreen({ navigation, route }) {
         const data = await userDoc.data();
         const newSelectedEvents = await data.selectedEvents;
         const newIgnoredEvents = await data.ignoredEvents;
+        const newUpvotedEvents = await data.upvotedEvents;
+        const newDownvotedEvents = await data.downvotedEvents;
         const listOfGroups = await data.groups;
-        const isFollowing = listOfGroups.includes(group);
-        groupRef
-          .doc(group)
+        const isFollowing = listOfGroups.includes(group.groupName);
+        groupsRef
+          .doc(group.groupName)
           .get()
           .then(async (groupDoc) => {
             const data = await groupDoc.data();
@@ -59,25 +66,28 @@ function GroupScreen({ navigation, route }) {
               setStatus("Follow");
             }
             if (data.mode == "Public") setPrivacy(false);
-          });
+          })
+          .catch((error) => alert(error));;
         setFollow(isFollowing);
         setStatusAvailable(true);
         setSelectedEvents(newSelectedEvents);
         setIgnoredEvents(newIgnoredEvents);
+        setUpvotedEvents(newUpvotedEvents);
+        setDownvotedEvents(newDownvotedEvents);
       })
       .catch((error) => alert(error));
   };
 
   const refreshEvents = (groupName) => {
     setRefreshing(true);
+
     if (groupName != "") {
-      groupRef
+      groupsRef
         .doc(groupName)
         .get()
         .then(async (groupDoc) => {
           const groupEvents = [];
           const data = groupDoc.data();
-          // const newGroups = data.group;
           const listOfEvents = await data.events;
           const listOfModerators = await data.moderator;
           if (listOfModerators.includes(user.id)) {
@@ -91,111 +101,43 @@ function GroupScreen({ navigation, route }) {
                 .get()
                 .then(async (doc) => {
                   const event = await doc.data();
-                  const loading2 = await groupEvents.push(event);
-                  //console.log(event);
+                  groupEvents.push(event);
                 });
             })
           );
-
-          // data.events.forEach(async (eventName) => {
-          //   //console.log(eventName);
-          //   const event = await eventsRef.doc(eventName).get().then((event) => {
-          //     const eachGroupEvent = event.data();
-          //     //console.log(eachGroupEvent);
-          //     groupEvents.push(eachGroupEvent);
-          //   });
-          //   // console.log(event);
-          //   // groupEvents.push(event);
-          // });
-          //console.log(groupEvents);
+          groupEvents.sort(compareEvents);
           setEvents(groupEvents);
         })
         .catch((error) => alert(error));
     }
 
-    // eventsRef
-    //   .orderBy("score")
-    //   .get()
-    //   .then((snapshot) => {
-    //     const newEvents = [];
-    //     snapshot.docs.forEach((doc) => {
-    //       const event = doc.data();
-    //       newEvents.push(event);
-    //     });
-    //     setEvents(newEvents.reverse());
-    //   })
-    //   .catch((error) => alert(error));
-
-    // groupsRef
-    //   .doc(groupName)
-    //   .get()
-    //   .then((groupDoc) => {
-    //     const groupEventIds = groupDoc.data().events;
-    //     const displayEventIds = filterArray(groupEventIds, selectedEvents);
-    //     const newEvents = [];
-    //     displayEventIds.forEach((eventId) => {
-    //       eventsRef
-    //         .doc(eventId)
-    //         .get()
-    //         .then((doc) => {
-    //           const event = doc.data();
-    //           newEvents.push(event);
-    //         })
-    //         .catch((error) => alert(error));
-    //     });
-    //     newEvents.sort(compareEvents);
-    //     console.log(newEvents);
-    //     setEvents(newEvents);
-    //   })
-    //   .catch((error) => alert(error));
     setRefreshing(false);
   };
 
-  // const fetchGroupData = () => {
-  //   groupRef
-  //     .get()
-  //     .then((groupDoc) => {
-  //       const data = groupDoc.data();
-  //       // const newGroups = data.group;
-  //       const events = data.events;
-  //       // setGroupList(newGroups);
-  //       setSelectedEvents(events);
-  //     })
-  //     .catch((error) => alert(error));
-  // };
+  function compareEvents(a, b) {
+    return b.score - a.score;
+  }
+
+  function checkVote(id) {
+    if (upvotedEvents.includes(id)) {
+      return 1;
+    } else if (downvotedEvents.includes(id)) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
 
   useFocusEffect(
     useCallback(() => {
       fetchUserData();
-      refreshEvents(group);
+      refreshEvents(group.groupName);
     }, [])
   );
 
-  const changeImage = (newImage) => {
-    groupRef
-      .doc(group)
-      .update("profileImage", newImage)
-      .catch((error) => alert(error));
-    navigation.navigate(routes.GROUP);
+  const onInvisible = (id) => {
+    setEvents(events.filter((event) => event.id !== id));
   };
-
-  // const onInvisible = (id) => (type) => {
-  //   if (type == "ignore") {
-  //     console.log("ignore:");
-  //     setSelectedEvents(selectedEvents.filter((event) => event.id !== id));
-  //     setIgnoredEvents(ignoredEvents.push(id));
-  //     // setEvents(events.filter((event) => event.id !== id));
-  //     // setEvents(events.push(id));
-  //     // refreshEvents(group);
-  //   } else if (type == "add") {
-  //     console.log("add:");
-  //     setIgnoredEvents(ignoredEvents.filter((event) => event.id !== id));
-  //     setSelectedEvents(selectedEvents.push(id));
-  //     // setEvents(events.filter((event) => event.id !== id));
-  //     // setEvents(events.push(id));
-  //     // refreshEvents(group);
-  //   }
-  // };
 
   const onAdd = async (id) => {
     await Promise.all(
@@ -214,30 +156,41 @@ function GroupScreen({ navigation, route }) {
 
   return (
     <Screen style={styles.container}>
-      <View style={{ backgroundColor: "white" }}>
-        <ProfileImage
-          style={styles.profileImage}
-          imageUri={groupRef.doc(group).get().groupImage}
-          onChangeImage={changeImage}
-          icon="account"
-        />
+      <BackButton onPress={() => navigation.goBack()} />
+      <ConfigButton
+        onPress={() => navigation.navigate(routes.EDITGROUP, { group })}
+      />
+      <View style={styles.headerBar}>
+        <View style={styles.imageContainer}>
+          {!group.groupImage && (
+            <MaterialCommunityIcons
+              name={"account-group"}
+              size={30}
+              color={colors.medium}
+              style={styles.icon}
+            />
+          )}
+          {group.groupImage && (
+            <Image source={{ uri: group.groupImage }} style={styles.image} />
+          )}
+        </View>
+        <Text style={styles.displayName} numberOfLines={1}>
+          {group.groupName}
+        </Text>
       </View>
-
-      <Text style={styles.displayName}>{group}</Text>
-      <View style={{ alignItem: "center", flexDirection: "row" }}>
+      <View style={styles.buttonBar}>
         {statusAvailable && status != "" && (
-          <FollowButton title={group} status={status} />
+          <FollowButton title={group.groupName} status={status} />
         )}
         {moderator && statusAvailable && status != "" && (
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: colors.secondary }]}
-            onPress={() => navigation.navigate(routes.MOD, { group: group })}
+            style={styles.modButton}
+            onPress={() => navigation.navigate(routes.MOD, { group })}
           >
-            <Text style={{ color: colors.light }}>{"Moderator"}</Text>
+            <Text style={styles.moderate}>{"Moderate"}</Text>
           </TouchableOpacity>
         )}
       </View>
-
       {(!privacy || follow) && (
         <FlatList
           data={events}
@@ -246,7 +199,7 @@ function GroupScreen({ navigation, route }) {
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
-              onRefresh={() => refreshEvents(group)}
+              onRefresh={() => refreshEvents(group.groupName)}
               colors={[colors.primary]}
             />
           }
@@ -256,10 +209,14 @@ function GroupScreen({ navigation, route }) {
               dateTime={item.dateTime.toDate()}
               score={item.score}
               id={item.id}
-              onInvisible={() => {}}
+              onInvisible={() => onInvisible(item.id)}
               onAdd={() => onAdd(item.id)}
+              voteState={checkVote(item.id)}
               selected={selectedEvents.includes(item.id)}
               ignored={ignoredEvents.includes(item.id)}
+              moderator={moderator}
+              groupName={item.group}
+              inGroupScreen={true}
             />
           )}
         />
@@ -283,27 +240,47 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: colors.light,
   },
+  buttonBar: {
+    flexDirection: "row",
+    marginBottom: 25,
+    alignItems: "center",
+    justifyContent: "space-evenly",
+  },
+  moderate: {
+    color: colors.light,
+    fontSize: 18,
+  },
   headerBar: {
     flexDirection: "row",
-    marginTop: 10,
-    marginBottom: 20,
     alignItems: "center",
+    marginTop: 40,
+    marginBottom: 25,
   },
   displayName: {
-    alignSelf: "center",
-    fontSize: 30,
+    fontSize: 25,
     fontWeight: "bold",
-    marginBottom: 30,
   },
-  // profileImage: {
-  //   resizeMode: "center"
-  // }
-  button: {
+  imageContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.white,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+    marginHorizontal: 25,
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+  },
+  modButton: {
     justifyContent: "center",
     alignItems: "center",
     height: 40,
     width: 100,
     borderRadius: 20,
+    backgroundColor: colors.secondary,
   },
 });
 

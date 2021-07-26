@@ -78,9 +78,7 @@ function SearchGroupsScreen({ navigation }) {
           <SearchListItem
             imageUri={item.groupImage}
             name={item.groupName}
-            onPress={() =>
-              navigation.navigate(routes.GROUP, { group: item.groupName })
-            }
+            onPress={() => navigation.navigate(routes.GROUP, { group: item })}
           />
         )}
       />

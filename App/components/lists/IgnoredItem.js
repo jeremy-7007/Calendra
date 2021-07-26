@@ -8,7 +8,7 @@ import CrossButton from "./CrossButton";
 import colors from "../../config/colors";
 import AuthContext from "../../auth/context";
 
-function IgnoredItem({ dateTime, title, id, deleteCall }) {
+function IgnoredItem({ dateTime, title, id, groupName, deleteCall }) {
   const { user } = useContext(AuthContext);
 
   const userRef = firebase.firestore().collection("users").doc(user.id);
@@ -33,6 +33,10 @@ function IgnoredItem({ dateTime, title, id, deleteCall }) {
       <Text style={styles.title} numberOfLines={3}>
         {title}
       </Text>
+      <View style={styles.groupLine}>
+        <Text>Group: </Text>
+        <Text style={styles.groupName}>{groupName}</Text>
+      </View>
       <CrossButton onPress={() => onDelete()} style={styles.delete} />
     </View>
   );
@@ -59,6 +63,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     right: 20,
+  },
+  groupLine: {
+    flexDirection: "row",
+    marginTop: 10,
+  },
+  groupName: {
+    fontStyle: "italic",
   },
 });
 

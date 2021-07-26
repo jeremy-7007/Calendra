@@ -55,7 +55,7 @@ function RequestScreen({ navigation, route }) {
 
   return (
     <Screen style={{ padding: 10, backgroundColor: colors.light }}>
-      <BackButton onPress={() => navigation.navigate(routes.ACCOUNT)} />
+      <BackButton onPress={() => navigation.goBack()} />
       <Text style={styles.pageTitle}>Requests</Text>
       <FlatList
         style={styles.container}
