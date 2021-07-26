@@ -32,7 +32,9 @@ function GroupScreen({ navigation, route }) {
   const [moderator, setModerator] = useState(false);
   const [status, setStatus] = useState("");
   const [statusAvailable, setStatusAvailable] = useState(false);
-  // const [statusAvailable2, setStatusAvailable2] = useState(false);
+  const [follow, setFollow] = useState(false);
+  const [privacy, setPrivacy] = useState(true);
+  const [groupList, setGroupList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useContext(AuthContext);
 
@@ -54,16 +56,19 @@ function GroupScreen({ navigation, route }) {
         groupsRef
           .doc(group.groupName)
           .get()
-          .then((groupDoc) => {
-            if (groupDoc.data().requests.includes(user.id)) {
+          .then(async (groupDoc) => {
+            const data = await groupDoc.data();
+            if (data.requests.includes(user.id)) {
               setStatus("Requesting");
             } else if (isFollowing) {
               setStatus("Following");
             } else {
               setStatus("Follow");
             }
+            if (data.mode == "Public") setPrivacy(false);
           })
-          .catch((error) => alert(error));
+          .catch((error) => alert(error));;
+        setFollow(isFollowing);
         setStatusAvailable(true);
         setSelectedEvents(newSelectedEvents);
         setIgnoredEvents(newIgnoredEvents);
@@ -102,7 +107,6 @@ function GroupScreen({ navigation, route }) {
           );
           groupEvents.sort(compareEvents);
           setEvents(groupEvents);
-          // setStatusAvailable2(true);
         })
         .catch((error) => alert(error));
     }
@@ -178,7 +182,7 @@ function GroupScreen({ navigation, route }) {
         {statusAvailable && status != "" && (
           <FollowButton title={group.groupName} status={status} />
         )}
-        {moderator && (
+        {moderator && statusAvailable && status != "" && (
           <TouchableOpacity
             style={styles.modButton}
             onPress={() => navigation.navigate(routes.MOD, { group })}
@@ -187,34 +191,46 @@ function GroupScreen({ navigation, route }) {
           </TouchableOpacity>
         )}
       </View>
-      <FlatList
-        data={events}
-        keyExtractor={(event) => event.id.toString()}
-        ItemSeparatorComponent={ListItemSeparator}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => refreshEvents(group.groupName)}
-            colors={[colors.primary]}
-          />
-        }
-        renderItem={({ item }) => (
-          <ListItem
-            title={item.title}
-            dateTime={item.dateTime.toDate()}
-            score={item.score}
-            id={item.id}
-            onInvisible={() => onInvisible(item.id)}
-            onAdd={() => onAdd(item.id)}
-            voteState={checkVote(item.id)}
-            selected={selectedEvents.includes(item.id)}
-            ignored={ignoredEvents.includes(item.id)}
-            moderator={moderator}
-            groupName={item.group}
-            inGroupScreen={true}
-          />
-        )}
-      />
+      {(!privacy || follow) && (
+        <FlatList
+          data={events}
+          keyExtractor={(event) => event.id.toString()}
+          ItemSeparatorComponent={ListItemSeparator}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => refreshEvents(group.groupName)}
+              colors={[colors.primary]}
+            />
+          }
+          renderItem={({ item }) => (
+            <ListItem
+              title={item.title}
+              dateTime={item.dateTime.toDate()}
+              score={item.score}
+              id={item.id}
+              onInvisible={() => onInvisible(item.id)}
+              onAdd={() => onAdd(item.id)}
+              voteState={checkVote(item.id)}
+              selected={selectedEvents.includes(item.id)}
+              ignored={ignoredEvents.includes(item.id)}
+              moderator={moderator}
+              groupName={item.group}
+              inGroupScreen={true}
+            />
+          )}
+        />
+      )}
+
+      {privacy && !follow && (
+        <Text
+          style={{
+            color: colors.medium,
+          }}
+        >
+          This group is private
+        </Text>
+      )}
     </Screen>
   );
 }
