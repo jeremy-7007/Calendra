@@ -49,8 +49,8 @@ function GroupScreen({ navigation, route }) {
         groupRef
           .doc(group)
           .get()
-          .then((groupDoc) => {
-            const data = groupDoc.data();
+          .then(async (groupDoc) => {
+            const data = await groupDoc.data();
             if (data.requests.includes(user.id)) {
               setStatus("Requesting");
             } else if (isFollowing) {
