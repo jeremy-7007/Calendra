@@ -66,8 +66,8 @@ function CalendarScreen(props) {
               startTime={moment(item.dateTime.toDate()).format("hh : mm")}
               description={item.title}
               bookmarkColor={colors.primary}
-              id={item.id}
               importedMemo={item.memo}
+              groupName={item.group}
             />
           );
         }}
