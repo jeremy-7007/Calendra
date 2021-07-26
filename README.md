@@ -52,7 +52,7 @@ Welcome Screen                             |  Login Screen                      
 
 Full Calendar                                            |  Displayed Events                                        |  No Event Day
 :-------------------------------------------------------:|:--------------------------------------------------------:|:----------------------------------------------------------:
-<img src="../media/Calendar Month.png" alt="calendar_month" width="300"/>  |  <img src="../media/Calendar Day got Event.png" alt="calendar_event" width="300"/>  |  <img src="../media/Calendar Day no Event.png" alt="calendar_no_event" width="300"/>
+<img src="../media/Calendar Month.png" alt="calendar_month" width="300"/>  |  <img src="../media/New Calendar.png" alt="calendar_event" width="300"/>  |  <img src="../media/Calendar Day no Event.png" alt="calendar_no_event" width="300"/>
 
 
 * **Group Screen:** Display all the events of the groups in chronological order. Highlights all the events that the user has already registered for. Has a following/follow button to follow/unfollow. If the user is the moderator of the group, there is a "Moderate" button to access moderator's options.
@@ -60,6 +60,18 @@ Full Calendar                                            |  Displayed Events    
    <img src="../media/Group.png" alt="group" width="300"/>
 
 * **Moderator Screen:** Display the options for moderators of a group. Moderators can set the mode of the group from public to private(request to follow and see the events). Moderators can also add more moderators to the group, kick people from the group, accept requests to join the group, delete events, or quit their role.
+
+   *(To be added)*
+   
+* **Request Screen:** Moderators can accept or decline requests to follow the group.
+
+   *(To be added)*
+   
+* **Add Moderator Screen:** Moderators can search from the list of group members to add new moderators for the group.
+
+   *(To be added)*
+   
+* **Member Screen:** Show a list of all the members of the group. Moderators can kick people out of the group.
 
    *(To be added)*
    
@@ -71,7 +83,11 @@ Full Calendar                                            |  Displayed Events    
 
    <img src="../media/Account2.png" alt="account" width="300"/>
 
+* **Group Options Screen:** Display the options related to groups. User can search for groups, create new groups, or access the list of groups they are following.
 
+   <img src="../media/Group Options.PNG" alt="add_post" width="300"/>
+
+   
 * **My Group Screen:** Displays all the groups the user currently joins. Has a following/follow button to unfollow the group.
 
    <img src="../media/Mi Group.png" alt="my_group" width="300"/>
