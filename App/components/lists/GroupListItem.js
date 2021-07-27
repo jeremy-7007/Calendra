@@ -156,8 +156,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: 40,
-    width: "30%",
+    width: "40%",
     borderRadius: 20,
+    paddingHorizontal: 5,
   },
   icon: {},
 });
