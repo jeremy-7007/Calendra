@@ -30,6 +30,7 @@ function GroupScreen({ navigation, route }) {
   const [upvotedEvents, setUpvotedEvents] = useState([]);
   const [downvotedEvents, setDownvotedEvents] = useState([]);
   const [moderator, setModerator] = useState(false);
+  const [numOfMod, setNumOfMod] = useState(-1);
   const [status, setStatus] = useState("");
   const [statusAvailable, setStatusAvailable] = useState(false);
   const [follow, setFollow] = useState(false);
@@ -90,6 +91,8 @@ function GroupScreen({ navigation, route }) {
           const data = groupDoc.data();
           const listOfEvents = await data.events;
           const listOfModerators = await data.moderator;
+          setNumOfMod(listOfModerators.length);
+          console.log(numOfMod);
           if (listOfModerators.includes(user.id)) {
             setModerator(true);
           }
@@ -118,6 +121,10 @@ function GroupScreen({ navigation, route }) {
     return b.score - a.score;
   }
 
+  function onQuitMod(bool) {
+    setModerator(bool);
+  }
+
   function checkVote(id) {
     if (upvotedEvents.includes(id)) {
       return 1;
@@ -137,6 +144,10 @@ function GroupScreen({ navigation, route }) {
 
   const onInvisible = (id) => {
     setEvents(events.filter((event) => event.id !== id));
+  };
+
+  const onUnfollow = () => {
+    setModerator(false);
   };
 
   const onAdd = async (id) => {
@@ -180,12 +191,22 @@ function GroupScreen({ navigation, route }) {
       </View>
       <View style={styles.buttonBar}>
         {statusAvailable && status != "" && (
-          <FollowButton title={group.groupName} status={status} />
+          <FollowButton
+            title={group.groupName}
+            status={status}
+            lastMod={moderator && numOfMod == 1}
+            onPress={onUnfollow}
+          />
         )}
         {moderator && statusAvailable && status != "" && (
           <TouchableOpacity
             style={styles.modButton}
-            onPress={() => navigation.navigate(routes.MOD, { group })}
+            onPress={() =>
+              navigation.navigate(routes.MOD, {
+                group: group,
+                onPress: onQuitMod,
+              })
+            }
           >
             <Text style={styles.moderate}>{"Moderate"}</Text>
           </TouchableOpacity>

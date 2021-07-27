@@ -47,10 +47,17 @@ function MyGroupScreen({ navigation }) {
         if (isMounted > 0) setMyGroups(holder);
       })
       .catch((error) => alert(error));
+
     return () => {
       isMounted = isMounted - 1;
     };
   }, []);
+
+  const checkLastMod = (groupData) => {
+    const listOfMods = groupData.moderator;
+    const numOfMods = listOfMods.length;
+    return listOfMods.includes(user.id) && numOfMods == 1;
+  };
 
   return (
     <Screen style={{ padding: 10, backgroundColor: colors.white }}>
@@ -66,6 +73,7 @@ function MyGroupScreen({ navigation }) {
             title={item.groupName}
             image={item.groupImage}
             onPress={() => navigation.navigate(routes.GROUP, { group: item })}
+            lastMod={checkLastMod(item)}
           />
         )}
       />

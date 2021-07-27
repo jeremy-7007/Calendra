@@ -1,15 +1,15 @@
-import React, { useContext, useState } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import React, { useContext, useState, useCallback } from "react";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import colors from "../../config/colors";
 import Text from "../Text";
 import AuthContext from "../../auth/context";
 import { firebase } from "../../../firebase/config";
+import { useFocusEffect } from "@react-navigation/native";
 
-function FollowButton({ title, status, style }) {
+function FollowButton({ title, status, style, lastMod, onPress }) {
   const { user } = useContext(AuthContext);
   const [follow, setFollow] = useState(status);
-  const [moderator, setModerator] = useState(false);
-  const [numOfMod, setNumOfMod] = useState(-1);
+
   //console.log(follow);
 
   const usersRef = firebase.firestore().collection("users").doc(user.id);
@@ -39,17 +39,12 @@ function FollowButton({ title, status, style }) {
     });
   };
   const handleUnfollow = async () => {
-    groupRef.get().then(async (groupDoc) => {
-      const data = groupDoc.data();
-      const listOfModerators = await data.moderator;
-      if (listOfModerators.includes(user.id)) {
-        setModerator(true);
-        setNumOfMod(listOfModerators.length);
-      }
-    });
-
-    if (moderator && numOfMod < 2) {
-      alert("You cannot unfollow this group since you are the last moderator");
+    if (lastMod) {
+      alert(
+        "You cannot unfollow *" +
+          title +
+          "* since you are the last moderator of this group"
+      );
     } else {
       setFollow("Follow");
       const removeGroup = await usersRef
@@ -66,31 +61,34 @@ function FollowButton({ title, status, style }) {
           moderator: firebase.firestore.FieldValue.arrayRemove(user.id),
         })
         .catch((error) => alert(error));
+      onPress();
     }
   };
 
   return (
-    <TouchableOpacity
-      style={[
-        styles.button,
-        {
-          backgroundColor:
-            follow == "Following"
-              ? colors.primary
-              : follow == "Follow"
-              ? colors.white
-              : colors.secondary,
-        },
-        style,
-      ]}
-      onPress={follow == "Follow" ? handleFollow : handleUnfollow}
-    >
-      <Text
-        style={{ color: follow != "Follow" ? colors.light : colors.medium }}
+    <View>
+      <TouchableOpacity
+        style={[
+          styles.button,
+          {
+            backgroundColor:
+              follow == "Following"
+                ? colors.primary
+                : follow == "Follow"
+                ? colors.white
+                : colors.secondary,
+          },
+          style,
+        ]}
+        onPress={follow == "Follow" ? handleFollow : handleUnfollow}
       >
-        {follow}
-      </Text>
-    </TouchableOpacity>
+        <Text
+          style={{ color: follow != "Follow" ? colors.light : colors.medium }}
+        >
+          {follow}
+        </Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 

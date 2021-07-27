@@ -11,9 +11,10 @@ import colors from "../config/colors";
 import BackButton from "../components/BackButton";
 
 function ModeratorScreen({ navigation, route }) {
-  const { group } = route.params;
+  const { group, onPress } = route.params;
   const { user } = useContext(AuthContext);
   const [mode, setMode] = useState("");
+  const [numOfMods, setNumOfMods] = useState(-1);
 
   const groupRef = firebase
     .firestore()
@@ -27,6 +28,7 @@ function ModeratorScreen({ navigation, route }) {
       .then((groupDoc) => {
         const data = groupDoc.data();
         setMode(data.mode);
+        setNumOfMods(data.moderator.length);
       })
       .catch((error) => alert(error));
   }
@@ -34,12 +36,22 @@ function ModeratorScreen({ navigation, route }) {
   function GroupSetting() {}
 
   function QuitModerating() {
-    groupRef
-      .update({
-        moderator: firebase.firestore.FieldValue.arrayRemove(user.id),
-      })
-      .then(() => navigation.navigate(routes.GROUP, { group }))
-      .catch((error) => alert(error));
+    if (numOfMods == 1) {
+      alert(
+        "You cannot quit your moderator role since you are the last moderator of this group"
+      );
+    } else {
+      groupRef
+        .update({
+          moderator: firebase.firestore.FieldValue.arrayRemove(user.id),
+          members: firebase.firestore.FieldValue.arrayUnion(user.id),
+        })
+        .then(() => {
+          onPress(false);
+          navigation.navigate(routes.GROUP, { group });
+        })
+        .catch((error) => alert(error));
+    }
   }
 
   const onPickerChange = (itemValue) => {

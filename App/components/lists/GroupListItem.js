@@ -1,17 +1,16 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useCallback } from "react";
 import { Image, View, StyleSheet, TouchableOpacity } from "react-native";
 import { firebase } from "../../../firebase/config";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 import Text from "../Text";
 import colors from "../../config/colors";
 import AuthContext from "../../auth/context";
 
-function GroupListItem({ title, image, onPress }) {
+function GroupListItem({ title, image, onPress, lastMod }) {
   const { user } = useContext(AuthContext);
   const [follow, setFollow] = useState("Following");
-  const [moderator, setModerator] = useState(false);
-  const [numOfMod, setNumOfMod] = useState(-1);
 
   const usersRef = firebase.firestore().collection("users").doc(user.id);
   const groupRef = firebase.firestore().collection("groups").doc(title);
@@ -40,17 +39,12 @@ function GroupListItem({ title, image, onPress }) {
     });
   };
   const handleUnfollow = async () => {
-    groupRef.get().then(async (groupDoc) => {
-      const data = groupDoc.data();
-      const listOfModerators = await data.moderator;
-      if (listOfModerators.includes(user.id)) {
-        setModerator(true);
-        setNumOfMod(listOfModerators.length);
-      }
-    });
-
-    if (moderator && numOfMod < 2) {
-      alert("You cannot unfollow this group since you are the last moderator");
+    if (lastMod) {
+      alert(
+        "You cannot unfollow *" +
+          title +
+          "* since you are the last moderator of this group"
+      );
     } else {
       setFollow("Follow");
       const removeGroup = await usersRef
@@ -102,7 +96,9 @@ function GroupListItem({ title, image, onPress }) {
           onPress={follow == "Follow" ? handleFollow : handleUnfollow}
         >
           <Text
-            style={{ color: follow != "Follow" ? colors.light : colors.medium }}
+            style={{
+              color: follow != "Follow" ? colors.light : colors.medium,
+            }}
           >
             {follow}
           </Text>
