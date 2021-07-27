@@ -79,7 +79,8 @@ function SelectedItem({
         .get()
         .then(async (doc) => {
           const notif = await doc.data().notificationIds;
-          const identifier = await notif[id][0];
+          const eventNotif = await notif[id];
+          const identifier = (await eventNotif) ? eventNotif[0] : null;
           if (identifier) {
             await Notifications.cancelScheduledNotificationAsync(identifier);
           }

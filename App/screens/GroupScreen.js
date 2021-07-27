@@ -36,7 +36,6 @@ function GroupScreen({ navigation, route }) {
   const [statusAvailable2, setStatusAvailable2] = useState(false);
   const [follow, setFollow] = useState(false);
   const [privacy, setPrivacy] = useState(true);
-  const [groupList, setGroupList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useContext(AuthContext);
 
@@ -172,7 +171,7 @@ function GroupScreen({ navigation, route }) {
   return (
     <Screen style={styles.container}>
       <BackButton onPress={() => navigation.goBack()} />
-      {moderator && (
+      {moderator && mod && (
         <ConfigButton
           onPress={() => navigation.navigate(routes.EDITGROUP, { group })}
         />
