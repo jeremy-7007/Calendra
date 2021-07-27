@@ -8,6 +8,8 @@ import { firebase } from "../../../firebase/config";
 function FollowButton({ title, status, style }) {
   const { user } = useContext(AuthContext);
   const [follow, setFollow] = useState(status);
+  const [moderator, setModerator] = useState(false);
+  const [numOfMod, setNumOfMod] = useState(-1);
   //console.log(follow);
 
   const usersRef = firebase.firestore().collection("users").doc(user.id);
@@ -37,21 +39,34 @@ function FollowButton({ title, status, style }) {
     });
   };
   const handleUnfollow = async () => {
-    setFollow("Follow");
-    const removeGroup = await usersRef
-      .update({
-        groups: firebase.firestore.FieldValue.arrayRemove(title),
-      })
-      .catch((error) => alert(error));
-    const requesting = await groupRef.update({
-      requests: firebase.firestore.FieldValue.arrayRemove(user.id),
+    groupRef.get().then(async (groupDoc) => {
+      const data = groupDoc.data();
+      const listOfModerators = await data.moderator;
+      if (listOfModerators.includes(user.id)) {
+        setModerator(true);
+        setNumOfMod(listOfModerators.length);
+      }
     });
-    const removeFromGroup = await groupRef
-      .update({
-        members: firebase.firestore.FieldValue.arrayRemove(user.id),
-        moderator: firebase.firestore.FieldValue.arrayRemove(user.id),
-      })
-      .catch((error) => alert(error));
+
+    if (moderator && numOfMod < 2) {
+      alert("You cannot unfollow this group since you are the last moderator");
+    } else {
+      setFollow("Follow");
+      const removeGroup = await usersRef
+        .update({
+          groups: firebase.firestore.FieldValue.arrayRemove(title),
+        })
+        .catch((error) => alert(error));
+      const requesting = await groupRef.update({
+        requests: firebase.firestore.FieldValue.arrayRemove(user.id),
+      });
+      const removeFromGroup = await groupRef
+        .update({
+          members: firebase.firestore.FieldValue.arrayRemove(user.id),
+          moderator: firebase.firestore.FieldValue.arrayRemove(user.id),
+        })
+        .catch((error) => alert(error));
+    }
   };
 
   return (
