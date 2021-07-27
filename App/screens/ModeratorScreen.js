@@ -47,7 +47,7 @@ function ModeratorScreen({ navigation, route }) {
           members: firebase.firestore.FieldValue.arrayUnion(user.id),
         })
         .then(() => {
-          onPress(false);
+          onPress();
           navigation.navigate(routes.GROUP, { group });
         })
         .catch((error) => alert(error));

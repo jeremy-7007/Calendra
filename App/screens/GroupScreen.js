@@ -204,7 +204,7 @@ function GroupScreen({ navigation, route }) {
             onPress={() =>
               navigation.navigate(routes.MOD, {
                 group: group,
-                onPress: onQuitMod,
+                onPress: fetchUserData,
               })
             }
           >
