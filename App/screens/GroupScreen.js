@@ -23,16 +23,17 @@ import BackButton from "../components/BackButton";
 import ConfigButton from "../components/ConfigButton";
 
 function GroupScreen({ navigation, route }) {
-  const { group } = route.params;
+  const { group, mod = false } = route.params;
   const [events, setEvents] = useState([]);
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [ignoredEvents, setIgnoredEvents] = useState([]);
   const [upvotedEvents, setUpvotedEvents] = useState([]);
   const [downvotedEvents, setDownvotedEvents] = useState([]);
-  const [moderator, setModerator] = useState(false);
+  const [moderator, setModerator] = useState(mod);
   const [numOfMod, setNumOfMod] = useState(-1);
   const [status, setStatus] = useState("");
   const [statusAvailable, setStatusAvailable] = useState(false);
+  const [statusAvailable2, setStatusAvailable2] = useState(false);
   const [follow, setFollow] = useState(false);
   const [privacy, setPrivacy] = useState(true);
   const [groupList, setGroupList] = useState([]);
@@ -70,17 +71,19 @@ function GroupScreen({ navigation, route }) {
           })
           .catch((error) => alert(error));
         setFollow(isFollowing);
-        setStatusAvailable(true);
         setSelectedEvents(newSelectedEvents);
         setIgnoredEvents(newIgnoredEvents);
         setUpvotedEvents(newUpvotedEvents);
         setDownvotedEvents(newDownvotedEvents);
+        setStatusAvailable(true);
       })
       .catch((error) => alert(error));
   };
 
   const refreshEvents = (groupName) => {
     setRefreshing(true);
+
+    fetchUserData();
 
     if (groupName != "") {
       groupsRef
@@ -110,6 +113,7 @@ function GroupScreen({ navigation, route }) {
           );
           groupEvents.sort(compareEvents);
           setEvents(groupEvents);
+          setStatusAvailable2(true);
         })
         .catch((error) => alert(error));
     }
@@ -190,7 +194,7 @@ function GroupScreen({ navigation, route }) {
         </Text>
       </View>
       <View style={styles.buttonBar}>
-        {statusAvailable && status != "" && (
+        {statusAvailable && statusAvailable2 && status != "" && (
           <FollowButton
             title={group.groupName}
             status={status}
@@ -198,13 +202,13 @@ function GroupScreen({ navigation, route }) {
             onPress={onUnfollow}
           />
         )}
-        {moderator && statusAvailable && status != "" && (
+        {moderator && statusAvailable && statusAvailable2 && status != "" && (
           <TouchableOpacity
             style={styles.modButton}
             onPress={() =>
               navigation.navigate(routes.MOD, {
                 group: group,
-                onPress: fetchUserData,
+                //onPress: fetchUserData,
               })
             }
           >
@@ -212,7 +216,7 @@ function GroupScreen({ navigation, route }) {
           </TouchableOpacity>
         )}
       </View>
-      {(!privacy || follow) && (
+      {(!privacy || follow) && statusAvailable && statusAvailable2 && (
         <FlatList
           data={events}
           keyExtractor={(event) => event.id.toString()}
@@ -243,7 +247,7 @@ function GroupScreen({ navigation, route }) {
         />
       )}
 
-      {privacy && !follow && (
+      {privacy && !follow && statusAvailable && statusAvailable2 && (
         <Text
           style={{
             fontSize: 25,
