@@ -1,8 +1,7 @@
-import React, { useContext, useState, useCallback, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Image, View, StyleSheet, TouchableOpacity } from "react-native";
 import { firebase } from "../../../firebase/config";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFocusEffect } from "@react-navigation/native";
 
 import Text from "../Text";
 import colors from "../../config/colors";
@@ -90,31 +89,33 @@ function GroupListItem({ title, image, onPress, lastMod }) {
           )}
           {image && <Image style={styles.image} source={{ uri: image }} />}
         </View>
-        <Text numberOfLines={1} style={styles.title}>
-          {title}
-        </Text>
-        <TouchableOpacity
-          style={[
-            styles.button,
-            {
-              backgroundColor:
-                follow == "Following"
-                  ? colors.primary
-                  : follow == "Follow"
-                  ? colors.white
-                  : colors.secondary,
-            },
-          ]}
-          onPress={follow == "Follow" ? handleFollow : handleUnfollow}
-        >
-          <Text
-            style={{
-              color: follow != "Follow" ? colors.light : colors.medium,
-            }}
-          >
-            {follow}
+        <View style={styles.textSegment}>
+          <Text numberOfLines={1} style={styles.title}>
+            {title}
           </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              {
+                backgroundColor:
+                  follow == "Following"
+                    ? colors.primary
+                    : follow == "Follow"
+                    ? colors.white
+                    : colors.secondary,
+              },
+            ]}
+            onPress={follow == "Follow" ? handleFollow : handleUnfollow}
+          >
+            <Text
+              style={{
+                color: follow != "Follow" ? colors.light : colors.medium,
+              }}
+            >
+              {follow}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -124,14 +125,13 @@ const styles = StyleSheet.create({
   containter: {
     flexDirection: "row",
     flex: 1,
-    justifyContent: "space-between",
     alignItems: "center",
   },
   imageContainer: {
     width: 70,
     height: 70,
     borderRadius: 35,
-    marginRight: 10,
+    marginRight: 20,
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
@@ -142,7 +142,13 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   title: {
-    width: 150,
+    width: 130,
+  },
+  textSegment: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flex: 1,
   },
   button: {
     justifyContent: "center",

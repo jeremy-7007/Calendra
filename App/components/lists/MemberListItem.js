@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   Image,
   View,
@@ -10,7 +10,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import colors from "../../config/colors";
 import Text from "../Text";
-import AuthContext from "../../auth/context";
 import { firebase } from "../../../firebase/config";
 
 function MemberListItem({ title, imageUri, userId, groupId, mod }) {

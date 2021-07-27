@@ -11,7 +11,6 @@ import VoteCounter from "../VoteCounter";
 import AddButton from "./AddButton";
 import IgnoreButton from "./IgnoreButton";
 import AuthContext from "../../auth/context";
-import CrossButton from "./CrossButton";
 import ListItemDeleteAction from "./ListItemDeleteAction";
 
 function ListItem({
@@ -29,29 +28,14 @@ function ListItem({
   inGroupScreen = false,
 }) {
   const { user } = useContext(AuthContext);
+  const [selectedState, setSelectedState] = useState(selected);
+  const [ignoredState, setIgnoredState] = useState(ignored);
 
   const userRef = firebase.firestore().collection("users").doc(user.id);
   const groupRef = firebase.firestore().collection("groups").doc(groupName);
   const eventRef = firebase.firestore().collection("events").doc(id);
 
   const notificationContent = { title: "Event reminder", body: title };
-
-  // async function checkAdd() {
-  //   var result = false;
-  //   await Promise.all(
-  //     userRef.get().then(async (userDoc) => {
-  //       const data = await userDoc.data();
-  //       const listSelectedEvents = await data.selectedEvents;
-  //       if (listSelectedEvents == null) return;
-  //       await listSelectedEvents.map((event) => {
-  //         console.log(event);
-  //         if (event == id) result = true;
-  //       });
-  //     })
-  //   );
-  //   console.log(result);
-  //   return result;
-  // }
 
   async function handleAdd() {
     const identifier = await Notifications.scheduleNotificationAsync({
@@ -66,6 +50,8 @@ function ListItem({
     userRef.update(userUpdate).catch((error) => alert(error));
     if (!inGroupScreen) onInvisible();
     onAdd();
+    setSelectedState(true);
+    setIgnoredState(false);
   }
 
   async function handleIgnore() {
@@ -90,6 +76,8 @@ function ListItem({
         userRef.update(userUpdate).catch((error) => alert(error));
         if (!inGroupScreen) onInvisible();
         onAdd();
+        setIgnoredState(true);
+        setSelectedState(false);
       })
       .catch((error) => alert(error));
   }
@@ -133,8 +121,8 @@ function ListItem({
   }
 
   function checkColor() {
-    if (selected) return colors.grey;
-    else if (ignored) return colors.faint;
+    if (selectedState) return colors.grey;
+    else if (ignoredState) return colors.faint;
     else return colors.silver;
   }
 
@@ -157,12 +145,12 @@ function ListItem({
           <VoteCounter originalScore={score} id={id} voteState={voteState} />
         </View>
         <View style={styles.buttonContainer}>
-          {!selected ? (
+          {!selectedState ? (
             <AddButton onPress={handleAdd} />
           ) : (
             <Text style={styles.selected}>Selected</Text>
           )}
-          {!ignored ? (
+          {!ignoredState ? (
             <IgnoreButton onPress={handleIgnore} />
           ) : (
             <Text style={styles.ignored}>Ignored</Text>
