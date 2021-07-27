@@ -1,13 +1,14 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useCallback } from "react";
 import { Image, View, StyleSheet, TouchableOpacity } from "react-native";
 import { firebase } from "../../../firebase/config";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 
 import Text from "../Text";
 import colors from "../../config/colors";
 import AuthContext from "../../auth/context";
 
-function GroupListItem({ title, image, onPress }) {
+function GroupListItem({ title, image, onPress, lastMod }) {
   const { user } = useContext(AuthContext);
   const [follow, setFollow] = useState("Following");
 
@@ -38,25 +39,38 @@ function GroupListItem({ title, image, onPress }) {
     });
   };
   const handleUnfollow = async () => {
-    setFollow("Follow");
-    const removeGroup = await usersRef
-      .update({
-        groups: firebase.firestore.FieldValue.arrayRemove(title),
-      })
-      .catch((error) => alert(error));
-    const requesting = await groupRef.update({
-      requests: firebase.firestore.FieldValue.arrayRemove(user.id),
-    });
-    const removeFromGroup = await groupRef
-      .update({
-        members: firebase.firestore.FieldValue.arrayRemove(user.id),
-        moderator: firebase.firestore.FieldValue.arrayRemove(user.id),
-      })
-      .catch((error) => alert(error));
+    if (lastMod) {
+      alert(
+        "You cannot unfollow *" +
+          title +
+          "* since you are the last moderator of this group"
+      );
+    } else {
+      setFollow("Follow");
+      const removeGroup = await usersRef
+        .update({
+          groups: firebase.firestore.FieldValue.arrayRemove(title),
+        })
+        .catch((error) => alert(error));
+      const requesting = await groupRef.update({
+        requests: firebase.firestore.FieldValue.arrayRemove(user.id),
+      });
+      const removeFromGroup = await groupRef
+        .update({
+          members: firebase.firestore.FieldValue.arrayRemove(user.id),
+          moderator: firebase.firestore.FieldValue.arrayRemove(user.id),
+        })
+        .catch((error) => alert(error));
+    }
+  };
+
+  const reRender = () => {
+    onPress();
+    setFollow("Following");
   };
 
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={reRender}>
       <View style={styles.containter}>
         <View style={styles.imageContainer}>
           {!image && (
@@ -87,7 +101,9 @@ function GroupListItem({ title, image, onPress }) {
           onPress={follow == "Follow" ? handleFollow : handleUnfollow}
         >
           <Text
-            style={{ color: follow != "Follow" ? colors.light : colors.medium }}
+            style={{
+              color: follow != "Follow" ? colors.light : colors.medium,
+            }}
           >
             {follow}
           </Text>

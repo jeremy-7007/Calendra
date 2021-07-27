@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { firebase } from "../../firebase/config";
+import { useFocusEffect, NavigationEvents } from "@react-navigation/native";
 
 import BackButton from "../components/BackButton";
 import Text from "../components/Text";
@@ -19,12 +20,9 @@ function MyGroupScreen({ navigation }) {
   const { user } = useContext(AuthContext);
   const [myGroups, setMyGroups] = useState([]);
 
-  const userRef = firebase.firestore().collection("users").doc(user.id);
-  const groupRef = firebase.firestore().collection("groups");
-
-  useEffect(() => {
-    let isMounted = 2;
-
+  const fetchData = () => {
+    const userRef = firebase.firestore().collection("users").doc(user.id);
+    const groupRef = firebase.firestore().collection("groups");
     userRef
       .get()
       .then(async (userDoc) => {
@@ -44,18 +42,28 @@ function MyGroupScreen({ navigation }) {
           })
         );
 
-        if (isMounted > 0) setMyGroups(holder);
+        setMyGroups(holder);
       })
       .catch((error) => alert(error));
-    return () => {
-      isMounted = isMounted - 1;
-    };
-  }, []);
+  };
+
+  const checkLastMod = (groupData) => {
+    const listOfMods = groupData.moderator;
+    const numOfMods = listOfMods.length;
+    return listOfMods.includes(user.id) && numOfMods == 1;
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [])
+  );
 
   return (
     <Screen style={{ padding: 10, backgroundColor: colors.white }}>
       <BackButton onPress={() => navigation.navigate(routes.GROUPOPTIONS)} />
       <Text style={styles.pageTitle}>My Groups</Text>
+
       <FlatList
         style={styles.container}
         data={myGroups}
@@ -66,6 +74,7 @@ function MyGroupScreen({ navigation }) {
             title={item.groupName}
             image={item.groupImage}
             onPress={() => navigation.navigate(routes.GROUP, { group: item })}
+            lastMod={checkLastMod(item)}
           />
         )}
       />
