@@ -23,13 +23,13 @@ import BackButton from "../components/BackButton";
 import ConfigButton from "../components/ConfigButton";
 
 function GroupScreen({ navigation, route }) {
-  const { group, mod = false } = route.params;
+  const { group, mod = true } = route.params;
   const [events, setEvents] = useState([]);
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [ignoredEvents, setIgnoredEvents] = useState([]);
   const [upvotedEvents, setUpvotedEvents] = useState([]);
   const [downvotedEvents, setDownvotedEvents] = useState([]);
-  const [moderator, setModerator] = useState(mod);
+  const [moderator, setModerator] = useState(false);
   const [numOfMod, setNumOfMod] = useState(-1);
   const [status, setStatus] = useState("");
   const [statusAvailable, setStatusAvailable] = useState(false);
@@ -202,19 +202,23 @@ function GroupScreen({ navigation, route }) {
             onPress={onUnfollow}
           />
         )}
-        {moderator && statusAvailable && statusAvailable2 && status != "" && (
-          <TouchableOpacity
-            style={styles.modButton}
-            onPress={() =>
-              navigation.navigate(routes.MOD, {
-                group: group,
-                //onPress: fetchUserData,
-              })
-            }
-          >
-            <Text style={styles.moderate}>{"Moderate"}</Text>
-          </TouchableOpacity>
-        )}
+        {moderator &&
+          mod &&
+          statusAvailable &&
+          statusAvailable2 &&
+          status != "" && (
+            <TouchableOpacity
+              style={styles.modButton}
+              onPress={() =>
+                navigation.navigate(routes.MOD, {
+                  group: group,
+                  //onPress: fetchUserData,
+                })
+              }
+            >
+              <Text style={styles.moderate}>{"Moderate"}</Text>
+            </TouchableOpacity>
+          )}
       </View>
       {(!privacy || follow) && statusAvailable && statusAvailable2 && (
         <FlatList
