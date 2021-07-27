@@ -157,9 +157,11 @@ function GroupScreen({ navigation, route }) {
   return (
     <Screen style={styles.container}>
       <BackButton onPress={() => navigation.goBack()} />
-      <ConfigButton
-        onPress={() => navigation.navigate(routes.EDITGROUP, { group })}
-      />
+      {moderator && (
+        <ConfigButton
+          onPress={() => navigation.navigate(routes.EDITGROUP, { group })}
+        />
+      )}
       <View style={styles.headerBar}>
         <View style={styles.imageContainer}>
           {!group.groupImage && (

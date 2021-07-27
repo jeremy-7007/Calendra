@@ -35,6 +35,7 @@ function SelectedItem({
   const notificationContent = { title: "Event reminder", body: title };
 
   async function onDelete() {
+    console.log("Delete!");
     userRef
       .get()
       .then(async (doc) => {
@@ -105,7 +106,6 @@ function SelectedItem({
 
   return (
     <View style={styles.container}>
-      <CrossButton onPress={() => onDelete()} style={styles.delete} />
       <Text style={styles.date}>{moment(dateTime).format("DD MMMM YYYY")}</Text>
       <Text style={styles.time}>{moment(dateTime).format("HH : mm")}</Text>
       <Text style={styles.title} numberOfLines={3}>
@@ -130,6 +130,7 @@ function SelectedItem({
         <Text>Group: </Text>
         <Text style={styles.groupName}>{groupName}</Text>
       </View>
+      <CrossButton onPress={() => onDelete()} style={styles.delete} />
     </View>
   );
 }

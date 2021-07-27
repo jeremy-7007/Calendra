@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./app/assets/Calendra.png",
     "splash": {
-      "image": "./app/assets/splash.png",
+      "image": "./app/assets/Calendra_splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

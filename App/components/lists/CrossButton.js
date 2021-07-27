@@ -13,7 +13,9 @@ function CrossButton({ onPress, style }) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    zIndex: 99,
+  },
 });
 
 export default CrossButton;

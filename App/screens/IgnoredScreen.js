@@ -37,6 +37,19 @@ function IgnoredScreen({ navigation }) {
                 .doc(eventId)
                 .get()
                 .then(async (eventDoc) => {
+                  if (!eventDoc.exists) {
+                    userRef
+                      .update({
+                        ignoredEvents:
+                          firebase.firestore.FieldValue.arrayRemove(eventId),
+                        upvotedEvents:
+                          firebase.firestore.FieldValue.arrayRemove(eventId),
+                        downvotedEvents:
+                          firebase.firestore.FieldValue.arrayRemove(eventId),
+                      })
+                      .catch((error) => alert(error));
+                    return;
+                  }
                   const event = await eventDoc.data();
                   newIgnored.push(event);
                 })

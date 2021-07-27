@@ -38,6 +38,19 @@ function SelectedScreen({ navigation }) {
                 .doc(eventId)
                 .get()
                 .then(async (eventDoc) => {
+                  if (!eventDoc.exists) {
+                    userRef
+                      .update({
+                        selectedEvents:
+                          firebase.firestore.FieldValue.arrayRemove(eventId),
+                        upvotedEvents:
+                          firebase.firestore.FieldValue.arrayRemove(eventId),
+                        downvotedEvents:
+                          firebase.firestore.FieldValue.arrayRemove(eventId),
+                      })
+                      .catch((error) => alert(error));
+                    return;
+                  }
                   const event = await eventDoc.data();
                   event.notif = await notif[eventId][1];
                   event.memo = await memos[eventId];
