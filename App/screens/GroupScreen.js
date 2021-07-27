@@ -60,6 +60,7 @@ function GroupScreen({ navigation, route }) {
           .get()
           .then(async (groupDoc) => {
             const data = await groupDoc.data();
+            if (data.mode == "Public") setPrivacy(false);
             if (data.requests.includes(user.id)) {
               setStatus("Requesting");
             } else if (isFollowing) {
@@ -67,7 +68,6 @@ function GroupScreen({ navigation, route }) {
             } else {
               setStatus("Follow");
             }
-            if (data.mode == "Public") setPrivacy(false);
           })
           .catch((error) => alert(error));
         setFollow(isFollowing);
@@ -251,17 +251,21 @@ function GroupScreen({ navigation, route }) {
         />
       )}
 
-      {privacy && !follow && statusAvailable && statusAvailable2 && (
-        <Text
-          style={{
-            fontSize: 25,
-            color: colors.medium,
-            alignSelf: "center",
-          }}
-        >
-          This group is private
-        </Text>
-      )}
+      {privacy &&
+        !follow &&
+        statusAvailable &&
+        statusAvailable2 &&
+        status != "" && (
+          <Text
+            style={{
+              fontSize: 25,
+              color: colors.medium,
+              alignSelf: "center",
+            }}
+          >
+            This group is private
+          </Text>
+        )}
     </Screen>
   );
 }

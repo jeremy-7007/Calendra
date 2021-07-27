@@ -64,8 +64,13 @@ function GroupListItem({ title, image, onPress, lastMod }) {
     }
   };
 
+  const reRender = () => {
+    onPress();
+    setFollow("Following");
+  };
+
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={reRender}>
       <View style={styles.containter}>
         <View style={styles.imageContainer}>
           {!image && (
