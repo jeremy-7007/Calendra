@@ -190,7 +190,7 @@ function GroupScreen({ navigation, route }) {
             <Image source={{ uri: group.groupImage }} style={styles.image} />
           )}
         </View>
-        <Text style={styles.displayName} numberOfLines={1}>
+        <Text style={styles.displayName} numberOfLines={1} adjustsFontSizeToFit>
           {group.groupName}
         </Text>
       </View>
@@ -295,6 +295,7 @@ const styles = StyleSheet.create({
   displayName: {
     fontSize: 25,
     fontWeight: "bold",
+    width: "50%",
   },
   imageContainer: {
     width: 80,

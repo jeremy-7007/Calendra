@@ -9,6 +9,7 @@ import BackButton from "../components/BackButton";
 import { Form, FormField, SubmitButton } from "../components/forms";
 import ActivityIndicator from "../components/ActivityIndicator";
 import routes from "../navigation/routes";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().required().email().label("Email"),
@@ -47,35 +48,40 @@ function LoginScreen({ navigation }) {
   return (
     <>
       <ActivityIndicator visible={loading} />
-      <Screen style={styles.container}>
-        <BackButton onPress={() => navigation.navigate(routes.WELCOME)} />
-        <Image style={styles.logo} source={require("../assets/Calendra.png")} />
-        <Form
-          initialValues={{ email: "", password: "" }}
-          onSubmit={(values) => onLoginPress(values)}
-          validationSchema={validationSchema}
-        >
-          <FormField
-            autoCapitalize="none"
-            autoCorrect={false}
-            icon="email"
-            keyboardType="email-address"
-            name="email"
-            placeholder="Email"
-            textContentType="emailAddress"
+      <KeyboardAwareScrollView>
+        <Screen style={styles.container}>
+          <BackButton onPress={() => navigation.navigate(routes.WELCOME)} />
+          <Image
+            style={styles.logo}
+            source={require("../assets/Calendra.png")}
           />
-          <FormField
-            autoCapitalize="none"
-            autoCorrect={false}
-            icon="lock"
-            name="password"
-            placeholder="Password"
-            secureTextEntry
-            textContentType="password"
-          />
-          <SubmitButton title="Login" />
-        </Form>
-      </Screen>
+          <Form
+            initialValues={{ email: "", password: "" }}
+            onSubmit={(values) => onLoginPress(values)}
+            validationSchema={validationSchema}
+          >
+            <FormField
+              autoCapitalize="none"
+              autoCorrect={false}
+              icon="email"
+              keyboardType="email-address"
+              name="email"
+              placeholder="Email"
+              textContentType="emailAddress"
+            />
+            <FormField
+              autoCapitalize="none"
+              autoCorrect={false}
+              icon="lock"
+              name="password"
+              placeholder="Password"
+              secureTextEntry
+              textContentType="password"
+            />
+            <SubmitButton title="Login" />
+          </Form>
+        </Screen>
+      </KeyboardAwareScrollView>
     </>
   );
 }

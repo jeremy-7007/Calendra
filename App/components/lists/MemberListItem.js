@@ -66,7 +66,7 @@ function MemberListItem({ title, imageUri, userId, groupId, mod }) {
           )}
         </View>
         <View style={styles.textSegment}>
-          <Text numberOfLines={1} style={styles.name}>
+          <Text numberOfLines={1} style={styles.name} adjustsFontSizeToFit>
             {title}
           </Text>
           {!add && mod && (
@@ -111,13 +111,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
-    marginRight: 30,
+    marginRight: 20,
   },
   image: {
     width: "100%",
     height: "100%",
   },
-  name: {},
+  name: {
+    width: "55%",
+  },
   icon: {},
   textSegment: {
     flexDirection: "row",

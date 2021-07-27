@@ -90,7 +90,7 @@ function GroupListItem({ title, image, onPress, lastMod }) {
           {image && <Image style={styles.image} source={{ uri: image }} />}
         </View>
         <View style={styles.textSegment}>
-          <Text numberOfLines={1} style={styles.title}>
+          <Text numberOfLines={1} style={styles.title} adjustsFontSizeToFit>
             {title}
           </Text>
           <TouchableOpacity
@@ -111,6 +111,8 @@ function GroupListItem({ title, image, onPress, lastMod }) {
               style={{
                 color: follow != "Follow" ? colors.light : colors.medium,
               }}
+              adjustsFontSizeToFit
+              numberOfLines={1}
             >
               {follow}
             </Text>
@@ -142,7 +144,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   title: {
-    width: 130,
+    width: "55%",
   },
   textSegment: {
     flexDirection: "row",
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     height: 40,
-    width: 100,
+    width: "30%",
     borderRadius: 20,
   },
   icon: {},

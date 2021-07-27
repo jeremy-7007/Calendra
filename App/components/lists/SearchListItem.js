@@ -19,7 +19,7 @@ function SearchListItem({ imageUri, name, onPress }) {
         )}
         {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
       </View>
-      <Text numberOfLines={1} style={styles.name}>
+      <Text numberOfLines={1} style={styles.name} adjustsFontSizeToFit>
         {name}
       </Text>
     </TouchableOpacity>
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   name: {
-    width: 150,
+    width: "70%",
   },
   icon: {},
 });

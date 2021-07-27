@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { StyleSheet } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import { firebase } from "../../firebase/config";
 
 import AuthContext from "../auth/context";
@@ -14,27 +15,29 @@ function AccountScreen({ navigation }) {
 
   return (
     <Screen style={styles.container}>
-      <ProfileImage
-        imageUri={user.profileImage}
-        onPress={() => {}}
-        icon="account"
-      />
-      <Text style={styles.displayName}>{user.displayName}</Text>
-      <Button
-        title="Group Options"
-        onPress={() => navigation.navigate(routes.GROUPSNAV)}
-      />
-      <Button
-        title="Settings"
-        onPress={() => navigation.navigate(routes.SETTINGNAV)}
-      />
-      <Button
-        title="Logout"
-        onPress={() => {
-          setUser(null);
-          firebase.auth().signOut();
-        }}
-      />
+      <KeyboardAwareScrollView>
+        <ProfileImage
+          imageUri={user.profileImage}
+          onPress={() => {}}
+          icon="account"
+        />
+        <Text style={styles.displayName}>{user.displayName}</Text>
+        <Button
+          title="Group Options"
+          onPress={() => navigation.navigate(routes.GROUPSNAV)}
+        />
+        <Button
+          title="Settings"
+          onPress={() => navigation.navigate(routes.SETTINGNAV)}
+        />
+        <Button
+          title="Logout"
+          onPress={() => {
+            setUser(null);
+            firebase.auth().signOut();
+          }}
+        />
+      </KeyboardAwareScrollView>
     </Screen>
   );
 }

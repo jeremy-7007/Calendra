@@ -62,7 +62,7 @@ function UserListItem({ title, image, userId, groupId }) {
           {image && <Image source={{ uri: image }} style={styles.image} />}
         </View>
         <View style={styles.textSegment}>
-          <Text numberOfLines={1} style={styles.title}>
+          <Text numberOfLines={1} style={styles.title} adjustsFontSizeToFit>
             {title}
           </Text>
           {!accept && !reject && (
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    marginRight: 30,
+    marginRight: 20,
     justifyContent: "center",
     alignItems: "center",
     overflow: "hidden",
@@ -112,7 +112,9 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   icon: {},
-  title: {},
+  title: {
+    width: "55%",
+  },
   textSegment: {
     flexDirection: "row",
     justifyContent: "space-between",

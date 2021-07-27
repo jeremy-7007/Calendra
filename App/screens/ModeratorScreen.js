@@ -9,6 +9,7 @@ import Button from "../components/Button";
 import Picker from "../components/AppPicker";
 import colors from "../config/colors";
 import BackButton from "../components/BackButton";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 
 function ModeratorScreen({ navigation, route }) {
   const { group, onPress } = route.params;
@@ -69,37 +70,39 @@ function ModeratorScreen({ navigation, route }) {
 
   return (
     <Screen style={styles.container}>
-      <BackButton onPress={() => navigation.goBack()} />
-      <Text style={styles.pageTitle}>Moderator Options</Text>
-      {mode !== "" && (
-        <View style={styles.headerBar}>
-          <Text style={styles.privacy}>{"Privacy Mode"}</Text>
-          <Picker
-            value={mode}
-            onValueChange={onPickerChange}
-            optionList={listOfModes}
-            containerStyle={{ width: "50%" }}
-            mode="dropdown"
-          />
-        </View>
-      )}
-      <Button
-        title="Requests"
-        onPress={() => navigation.navigate(routes.REQUEST, { group })}
-      />
-      <Button
-        title="Add Moderators"
-        onPress={() => {
-          navigation.navigate(routes.ADDMOD, { group });
-        }}
-      />
-      <Button
-        title="Members"
-        onPress={() => {
-          navigation.navigate(routes.MEMBER, { group });
-        }}
-      />
-      <Button title="Quit Moderating" onPress={QuitModerating} />
+      <KeyboardAwareScrollView>
+        <BackButton onPress={() => navigation.goBack()} />
+        <Text style={styles.pageTitle}>Moderator Options</Text>
+        {mode !== "" && (
+          <View style={styles.headerBar}>
+            <Text style={styles.privacy}>{"Privacy Mode"}</Text>
+            <Picker
+              value={mode}
+              onValueChange={onPickerChange}
+              optionList={listOfModes}
+              containerStyle={{ width: "50%" }}
+              mode="dropdown"
+            />
+          </View>
+        )}
+        <Button
+          title="Requests"
+          onPress={() => navigation.navigate(routes.REQUEST, { group })}
+        />
+        <Button
+          title="Add Moderators"
+          onPress={() => {
+            navigation.navigate(routes.ADDMOD, { group });
+          }}
+        />
+        <Button
+          title="Members"
+          onPress={() => {
+            navigation.navigate(routes.MEMBER, { group });
+          }}
+        />
+        <Button title="Quit Moderating" onPress={QuitModerating} />
+      </KeyboardAwareScrollView>
     </Screen>
   );
 }
