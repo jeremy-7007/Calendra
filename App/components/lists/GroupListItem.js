@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback } from "react";
+import React, { useContext, useState, useCallback, useEffect } from "react";
 import { Image, View, StyleSheet, TouchableOpacity } from "react-native";
 import { firebase } from "../../../firebase/config";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -66,8 +66,15 @@ function GroupListItem({ title, image, onPress, lastMod }) {
 
   const reRender = () => {
     onPress();
-    setFollow("Following");
   };
+
+  useEffect(() => {
+    //setFollow("Following");
+    usersRef.get().then((userDoc) => {
+      const data = userDoc.data();
+      if (data.groups.includes(title)) setFollow("Following");
+    });
+  });
 
   return (
     <TouchableOpacity onPress={reRender}>
